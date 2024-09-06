@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: gachalyfe
+  datasource:
+    url: jdbc:sqlite:file:rapi.sqlite
+  jpa:
+    hibernate:
+        ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.community.dialect.SQLiteDialect
+        format_sql: true
+    show-sql: true
+
+server:
+  port: 8000
