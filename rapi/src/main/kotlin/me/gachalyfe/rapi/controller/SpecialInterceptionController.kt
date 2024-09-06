@@ -1,9 +1,9 @@
 package me.gachalyfe.rapi.controller
 
 import jakarta.validation.Valid
-import me.gachalyfe.rapi.data.dto.AnomalyInterceptionDTO
-import me.gachalyfe.rapi.domain.model.AnomalyInterception
-import me.gachalyfe.rapi.domain.service.AnomalyInterceptionService
+import me.gachalyfe.rapi.data.dto.SpecialInterceptionDTO
+import me.gachalyfe.rapi.domain.model.SpecialInterception
+import me.gachalyfe.rapi.domain.service.SpecialInterceptionService
 import me.gachalyfe.rapi.utils.lazyLogger
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("api/anomaly-interceptions")
-class AnomalyInterceptionController(
-    private val service: AnomalyInterceptionService,
+@RequestMapping("api/special-interceptions")
+class SpecialInterceptionController(
+    private val service: SpecialInterceptionService,
 ) {
     private val log by lazyLogger()
 
     @GetMapping
-    fun getLast10(): ResponseEntity<List<AnomalyInterception>> {
+    fun getLast10(): ResponseEntity<List<SpecialInterception>> {
         val data = service.getAttempts()
         return ResponseEntity.ok(data)
     }
@@ -31,15 +31,15 @@ class AnomalyInterceptionController(
     @GetMapping("{id}")
     fun getById(
         @PathVariable("id") id: Long,
-    ): ResponseEntity<AnomalyInterception> {
+    ): ResponseEntity<SpecialInterception> {
         val data = service.getAttempt(id)
         return ResponseEntity.ok(data)
     }
 
     @PostMapping
     fun create(
-        @Valid @RequestBody dto: AnomalyInterceptionDTO,
-    ): ResponseEntity<AnomalyInterception> {
+        @Valid @RequestBody dto: SpecialInterceptionDTO,
+    ): ResponseEntity<SpecialInterception> {
         val newAttempt = service.createAttempt(dto)
         log.info("Created new anomaly interception attempt for ${dto.date} against ${dto.bossName}")
         return ResponseEntity.ok(newAttempt)
@@ -48,8 +48,8 @@ class AnomalyInterceptionController(
     @PutMapping("{id}")
     fun update(
         @PathVariable("id") id: Long,
-        @Valid @RequestBody dto: AnomalyInterceptionDTO,
-    ): ResponseEntity<AnomalyInterception> {
+        @Valid @RequestBody dto: SpecialInterceptionDTO,
+    ): ResponseEntity<SpecialInterception> {
         val status = service.updateAttempt(id, dto)
         log.info("Updated anomaly interception attempt with id $id on ${dto.date}")
         return ResponseEntity.ok(status)

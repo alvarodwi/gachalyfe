@@ -1,6 +1,6 @@
 -- create anomaly interception table
 create table anomaly_interceptions(
-    id bigint primary key not null,
+    id integer primary key autoincrement not null,
     date varchar(24),
     boss_name varchar(20) not null,
     stage integer not null,
@@ -11,7 +11,7 @@ create table anomaly_interceptions(
 
 --create special interception table
 create table special_interceptions(
-  id bigint primary key not null,
+  id integer primary key autoincrement not null,
   date varchar(24) not null,
   boss_name varchar(20) not null,
   t9equipment integer not null,
@@ -21,11 +21,12 @@ create table special_interceptions(
 
 -- create manufacturer equipment table
 create table manufacturer_equipments(
-    id bigint primary key not null,
+    id integer primary key autoincrement not null,
+    date varchar(24) not null,
     manufacturer varchar(8) not null,
     class_type varchar(9) not null,
     slot_type varchar(6) not null,
-    source_id bigint not null,
+    source_id integer not null,
     source_type integer not null
 );
 

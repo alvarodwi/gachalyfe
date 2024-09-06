@@ -1,0 +1,21 @@
+package me.gachalyfe.rapi.data.dto
+
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Max
+import jakarta.validation.constraints.Min
+import jakarta.validation.constraints.NotBlank
+
+data class SpecialInterceptionDTO(
+    @field:NotBlank
+    val date: String,
+    @field:NotBlank
+    val bossName: String,
+    @field:Min(0) @field:Max(6)
+    val t9Equipment: Int,
+    @field:Min(0) @field:Max(6)
+    val modules: Int,
+    @field:Min(0) @field:Max(6)
+    val t9ManufacturerEquipment: Int,
+    @field:Valid
+    val equipments: List<ManufacturerEquipmentDTO>,
+)

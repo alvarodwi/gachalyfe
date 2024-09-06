@@ -19,5 +19,4 @@ class ImporterServiceImpl : ImporterService {
     override fun importManufacturerEquipmentData(data: List<ManufacturerEquipment>) {
         TODO("Not yet implemented")
     }
-
 }

@@ -1,6 +1,8 @@
 package me.gachalyfe.rapi.domain.model
 
-enum class EquipmentSourceType(val code: Int) {
+enum class EquipmentSourceType(
+    val code: Int,
+) {
     SI_DROPS(1),
     AI_DROPS(2),
     GEARS(3),
