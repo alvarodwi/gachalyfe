@@ -1,5 +1,5 @@
 package me.gachalyfe.rapi.controller.exception
 
-class NotFoundException(
+class ResourceNotFoundException(
     message: String,
 ) : RuntimeException(message)

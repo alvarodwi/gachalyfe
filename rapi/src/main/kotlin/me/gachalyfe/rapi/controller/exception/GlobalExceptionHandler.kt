@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController
 
 @ControllerAdvice(annotations = [RestController::class])
 class GlobalExceptionHandler {
-    @ExceptionHandler(NotFoundException::class)
-    fun handleNotFoundException(e: NotFoundException): ResponseEntity<ErrorMessage> =
+    @ExceptionHandler(ResourceNotFoundException::class)
+    fun handleNotFoundException(e: ResourceNotFoundException): ResponseEntity<ErrorMessage> =
         ResponseEntity
             .status(HttpStatus.NOT_FOUND)
             .body(ErrorMessage(e.message ?: "There's no such resource(s)"))

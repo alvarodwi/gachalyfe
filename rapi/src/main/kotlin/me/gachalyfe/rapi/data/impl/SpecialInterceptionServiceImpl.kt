@@ -1,6 +1,6 @@
 package me.gachalyfe.rapi.data.impl
 
-import me.gachalyfe.rapi.controller.exception.NotFoundException
+import me.gachalyfe.rapi.controller.exception.ResourceNotFoundException
 import me.gachalyfe.rapi.data.DataMapper.asModel
 import me.gachalyfe.rapi.data.dto.SpecialInterceptionDTO
 import me.gachalyfe.rapi.data.entity.ManufacturerEquipmentEntity
@@ -61,7 +61,7 @@ class SpecialInterceptionServiceImpl(
                 return data.get().asModel()
             }
         } else {
-            throw NotFoundException("There's no such anomaly interception attempt with id=$id")
+            throw ResourceNotFoundException("There's no such anomaly interception attempt with id=$id")
         }
     }
 
@@ -83,7 +83,7 @@ class SpecialInterceptionServiceImpl(
             repo1.save(update)
             return update.asModel()
         } else {
-            throw NotFoundException("There's no such anomaly interception attempt with id=$id")
+            throw ResourceNotFoundException("There's no such anomaly interception attempt with id=$id")
         }
     }
 
@@ -97,7 +97,7 @@ class SpecialInterceptionServiceImpl(
             repo1.deleteById(id)
             return true
         } else {
-            throw NotFoundException("There's no such anomaly interception attempt with id=$id")
+            throw ResourceNotFoundException("There's no such anomaly interception attempt with id=$id")
         }
     }
 }

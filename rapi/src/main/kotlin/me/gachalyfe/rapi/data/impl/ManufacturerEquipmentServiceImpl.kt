@@ -1,6 +1,6 @@
 package me.gachalyfe.rapi.data.impl
 
-import me.gachalyfe.rapi.controller.exception.NotFoundException
+import me.gachalyfe.rapi.controller.exception.ResourceNotFoundException
 import me.gachalyfe.rapi.data.DataMapper.asModel
 import me.gachalyfe.rapi.data.dto.ManufacturerEquipmentDTO
 import me.gachalyfe.rapi.data.entity.ManufacturerEquipmentEntity
@@ -37,7 +37,7 @@ class ManufacturerEquipmentServiceImpl(
             repository.save(update)
             return update.asModel()
         } else {
-            throw NotFoundException("There's no such manufacturer equipments with id=$id")
+            throw ResourceNotFoundException("There's no such manufacturer equipments with id=$id")
         }
     }
 
@@ -47,7 +47,7 @@ class ManufacturerEquipmentServiceImpl(
             repository.deleteById(id)
             return true
         } else {
-            throw NotFoundException("There's no such manufacturer equipments with id=$id")
+            throw ResourceNotFoundException("There's no such manufacturer equipments with id=$id")
         }
     }
 }
