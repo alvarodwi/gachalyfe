@@ -19,5 +19,5 @@ export default function InventoryArmsPage() {
         </tr>
       </table>
     </>
-  );
+  )
 }

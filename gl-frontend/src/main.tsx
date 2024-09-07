@@ -1,28 +1,13 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Root from "./pages/Root.tsx";
-import RapiRoutes from "./pages/rapi/routes.tsx";
-import NotFoundPage from "./pages/NotFound.tsx";
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import { RouterProvider } from 'react-router-dom'
+import appRouter from './router'
+import 'virtual:uno.css'
+import '@unocss/reset/sanitize/sanitize.css'
+import '@unocss/reset/sanitize/assets.css'
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Root />,
-  },
-  {
-    path: "/rapi/*",
-    element: <RapiRoutes />,
-  },
-  {
-    path: "*",
-    element: <NotFoundPage />,
-  },
-]);
-
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <RouterProvider router={appRouter} />
   </StrictMode>
-);
+)

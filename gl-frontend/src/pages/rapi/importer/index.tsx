@@ -25,5 +25,5 @@ export default function ImporterPage() {
         <button type="submit">Import</button>
       </form>
     </>
-  );
+  )
 }

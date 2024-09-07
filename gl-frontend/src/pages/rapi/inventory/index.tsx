@@ -1,14 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom'
 
 export default function InventoryPage() {
   return (
     <>
       <h1>Account Inventory Stats</h1>
 
-      <Link to={"arms"}>
+      <Link to={'arms'}>
         <p>Open new manufacturer arms</p>
       </Link>
-      <Link to={"furnace"}>
+      <Link to={'furnace'}>
         <p>Open new manufacturer furnace</p>
       </Link>
 
@@ -31,5 +31,5 @@ export default function InventoryPage() {
         </tr>
       </table>
     </>
-  );
+  )
 }
