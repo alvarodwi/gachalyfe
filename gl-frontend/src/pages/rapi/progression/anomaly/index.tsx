@@ -41,30 +41,30 @@ export default function AnomalyPage() {
     switch (bossName) {
       case 'Harvester':
         setValue('dropType', 'Boots')
-        setValue('dropped', 'No')
+        setValue('dropped', false)
         break
       case 'Mirror Container':
         setValue('dropType', 'Gloves')
-        setValue('dropped', 'No')
+        setValue('dropped', false)
         break
       case 'Indivilia':
         setValue('dropType', 'Torso')
-        setValue('dropped', 'No')
+        setValue('dropped', false)
         break
       case 'Ultra':
         setValue('dropType', 'Helmet')
-        setValue('dropped', 'No')
+        setValue('dropped', false)
         break
       default:
         setValue('dropType', 'Modules')
-        setValue('dropped', 'Yes')
+        setValue('dropped', true)
         break
     }
   }, [bossName, setValue, dropType])
 
   // automatically show or hide equipment form
   useEffect(() => {
-    setIsEquipmentFormVisible(dropType != 'Modules' && `${dropped}` == 'Yes')
+    setIsEquipmentFormVisible(dropType != 'Modules' && dropped)
   }, [dropped, dropType])
 
   useEffect(() => {
@@ -186,17 +186,23 @@ export default function AnomalyPage() {
             </div>
 
             <div className="w-auto">
-              <label htmlFor="dropped" className="block">
-                Is Dropped?
-              </label>
-              <select
-                {...register('dropped')}
-                className="mt-1 w-fit rounded-md border-gray-200 shadow-sm sm:text-sm"
-                defaultValue={'No'}
+              <label
+                htmlFor="dropped"
+                className="flex cursor-pointer items-start gap-4"
               >
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-              </select>
+                <div className="flex items-center">
+                  &#8203;
+                  <input
+                    {...register('dropped')}
+                    type="checkbox"
+                    className="border-gray size-4 rounded border-solid"
+                  />
+                </div>
+
+                <div>
+                  <strong class="font-medium text-gray-900">Is Dropped</strong>
+                </div>
+              </label>
             </div>
 
             <span className="block text-lg font-bold">Drop Items</span>

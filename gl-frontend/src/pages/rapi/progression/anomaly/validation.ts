@@ -10,7 +10,7 @@ export const schema = z.object({
     .refine((x) => !isNaN(x), 'must be a number')
     .refine((x) => x >= 1 && x <= 9, 'must be between 1 and 9'),
   dropType: z.string().min(1, 'must not be empty'),
-  dropped: z.string().transform((x) => x == 'Yes'),
+  dropped: z.boolean(),
   modules: z
     .string()
     .transform((x) => parseInt(x))
