@@ -19,15 +19,12 @@ class HttpFactory {
     body?: object
     extras?: FetchOptions
   }): Promise<ApiResponse<T>> {
-    const $res: FetchResponse<T> = await this.$fetch.raw(url, {
+    const $res: FetchResponse<T> = await this.$fetch(url, {
       method,
       body: body,
       ...extras,
     })
-    return {
-      status: $res.status,
-      data: $res._data,
-    }
+    return $res
   }
 }
 

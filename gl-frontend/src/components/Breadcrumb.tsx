@@ -1,17 +1,18 @@
 import { Link } from 'react-router-dom'
 import { BreadcrumbLink } from '../models/ui/BreadcrumbLink'
+import cx from 'classix'
 
 export default function Breadcrumb({
-  className,
   crumbs,
+  className,
 }: {
-  className?: string
   crumbs: BreadcrumbLink[]
+  className?: string
 }) {
   return (
     <>
       <div data-id="breadcrumb">
-        <span className={className + ' flex flex-row'}>
+        <span className={cx(className, 'flex flex-row')}>
           {crumbs.map((crumb, i) => (
             <span className="text-sm" key={i}>
               {i === crumbs.length - 1 ? (

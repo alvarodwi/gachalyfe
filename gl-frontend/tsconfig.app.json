@@ -15,10 +15,11 @@
     "jsx": "react-jsx",
     "baseUrl": "./src",
     "paths": {
+      "@api/*": ["api/*"],
       "@models/*": ["models/*"],
       "@components/*": ["components/*"],
       "@pages/*": ["pages/*"],
-      "@api/*": ["api/*"]
+      "@utils/*": ["utils/*"]
     },
 
     /* Linting */

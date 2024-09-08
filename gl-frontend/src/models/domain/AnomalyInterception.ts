@@ -8,5 +8,5 @@ export interface AnomalyInterception {
   dropType: string
   dropped: boolean
   modules: number
-  equipments?: ManufacturerEquipment
+  equipment?: ManufacturerEquipment
 }

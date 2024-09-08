@@ -1,8 +1,14 @@
 import useApi from '@api/services/rapi'
 import Breadcrumb from '@components/Breadcrumb'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { AnomalyInterception } from '@models/domain/AnomalyInterception'
 import { BreadcrumbLink } from '@models/ui/BreadcrumbLink'
+import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
+import { schema } from './validation'
+import ManufacturerEquipmentForm from '@components/forms/ManufacturerEquipmentForm'
+import { useForm } from 'react-hook-form'
+import { ManufacturerEquipment } from '@models/domain/ManufacturerEquipment'
 
 export default function AnomalyPage() {
   const api = useApi()
@@ -13,6 +19,83 @@ export default function AnomalyPage() {
     { title: 'Anomaly Interception' },
   ]
   const [attempts, setAttempts] = useState<AnomalyInterception[]>()
+  const [isEquipmentFormVisible, setIsEquipmentFormVisible] =
+    useState<boolean>()
+
+  const { register, handleSubmit, watch, setValue } =
+    useForm<AnomalyInterception>({
+      resolver: zodResolver(schema),
+      defaultValues: {
+        bossName: 'Kraken',
+        dropped: true,
+      },
+    })
+
+  // watched variables
+  const bossName = watch('bossName')
+  const dropped = watch('dropped')
+  const dropType = watch('dropType')
+
+  // automatically match dropType
+  useEffect(() => {
+    switch (bossName) {
+      case 'Harvester':
+        setValue('dropType', 'Boots')
+        setValue('dropped', 'No')
+        break
+      case 'Mirror Container':
+        setValue('dropType', 'Gloves')
+        setValue('dropped', 'No')
+        break
+      case 'Indivilia':
+        setValue('dropType', 'Torso')
+        setValue('dropped', 'No')
+        break
+      case 'Ultra':
+        setValue('dropType', 'Helmet')
+        setValue('dropped', 'No')
+        break
+      default:
+        setValue('dropType', 'Modules')
+        setValue('dropped', 'Yes')
+        break
+    }
+  }, [bossName, setValue, dropType])
+
+  // automatically show or hide equipment form
+  useEffect(() => {
+    setIsEquipmentFormVisible(dropType != 'Modules' && `${dropped}` == 'Yes')
+  }, [dropped, dropType])
+
+  useEffect(() => {
+    if (!isEquipmentFormVisible) setValue('equipment', undefined)
+  }, [isEquipmentFormVisible, setValue])
+
+  async function onSubmit(data: AnomalyInterception) {
+    const response = await api.createNew(data)
+    if (response.status == 201) {
+      alert(response.message)
+      loadAttempts()
+    } else {
+      alert(`Error: ${response.message}`)
+    }
+  }
+
+  async function onDeleteAttempt(id: number) {
+    if (confirm(`Are you sure you want to delete this attempt?`)) {
+      const response = await api.deleteById(id)
+      if (response.status == 202) {
+        alert(response.message)
+        loadAttempts()
+      } else {
+        alert(`Error: ${response.message}`)
+      }
+    }
+  }
+
+  function handleEquipmentChange(data: ManufacturerEquipment) {
+    setValue('equipment', data)
+  }
 
   async function loadAttempts() {
     const response = await api.getLast10()
@@ -20,40 +103,44 @@ export default function AnomalyPage() {
     if (response.status == 200) {
       setAttempts(response.data)
     } else {
-      console.log('api.getLast10() failed')
+      console.log(`Error: ${response.message}`)
     }
   }
 
   useEffect(() => {
     loadAttempts()
-  }, [])
+  }, []) //eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
       <main className="flex w-screen flex-row">
-        <div className="flex min-h-screen w-2/3 flex-col p-4">
+        <div className="flex min-h-screen w-1/3 flex-col p-4">
           <Breadcrumb crumbs={crumbs} />
           <h1 className="my-2">Anomaly Interceptions</h1>
 
           <h2>Input today's attempt</h2>
-          <form className="flex flex-col gap-4">
-            <div className="col-span-2 w-fit">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-4"
+          >
+            <div className="w-fit">
               <label htmlFor="date" className="block">
                 Date
               </label>
               <input
                 type="date"
-                name="date"
+                {...register('date')}
+                defaultValue={dayjs().format('YYYY-MM-DD')}
                 className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
               />
             </div>
-            <div className="flex flex-row items-center gap-4">
+            <div className="flex flex-row gap-4">
               <div className="w-fit">
                 <label htmlFor="bossName" className="block">
                   Boss Name
                 </label>
                 <select
-                  name="bossName"
+                  {...register('bossName')}
                   className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
                 >
                   <option value="Harvester">Harvester</option>
@@ -69,7 +156,7 @@ export default function AnomalyPage() {
                   Drop Type
                 </label>
                 <select
-                  name="dropType"
+                  {...register('dropType')}
                   className="disabled mt-1 w-fit rounded-md border-gray-200 shadow-sm sm:text-sm"
                   disabled
                 >
@@ -89,7 +176,7 @@ export default function AnomalyPage() {
                 </label>
                 <input
                   type="number"
-                  name="stage"
+                  {...register('stage')}
                   max={9}
                   min={1}
                   defaultValue={6}
@@ -103,9 +190,9 @@ export default function AnomalyPage() {
                 Is Dropped?
               </label>
               <select
-                name="dropped"
+                {...register('dropped')}
                 className="mt-1 w-fit rounded-md border-gray-200 shadow-sm sm:text-sm"
-                defaultValue={'Yes'}
+                defaultValue={'No'}
               >
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
@@ -114,30 +201,34 @@ export default function AnomalyPage() {
 
             <span className="block text-lg font-bold">Drop Items</span>
 
-            <div className="flex flex-row gap-4">
-              <div className="w-fit">
-                <label htmlFor="modules" className="block">
-                  Custom Modules <span className="text-xs"> aka Rocks</span>
-                </label>
-                <input
-                  type="number"
-                  max={3}
-                  min={0}
-                  defaultValue={0}
-                  name="modules"
-                  className="mt-1 w-fit rounded-md border-gray-200 shadow-sm sm:text-sm"
-                />
-              </div>
-              <div className="w-fit">
+            <div className="w-fit whitespace-nowrap">
+              <label htmlFor="modules" className="block">
+                Custom Modules <span className="text-xs"> aka Rocks</span>
+              </label>
+              <input
+                type="number"
+                max={3}
+                min={0}
+                defaultValue={0}
+                {...register('modules')}
+                className="mt-1 w-fit rounded-md border-gray-200 shadow-sm sm:text-sm"
+              />
+            </div>
+            {isEquipmentFormVisible && (
+              <div className="w-full">
                 <label htmlFor="modules" className="block">
                   Equipment
                 </label>
+                <ManufacturerEquipmentForm
+                  dropType={dropType}
+                  onChange={handleEquipmentChange}
+                />
+                <input type="hidden" {...register('equipment.manufacturer')} />
+                <input type="hidden" {...register('equipment.slotType')} />
+                <input type="hidden" {...register('equipment.classType')} />
               </div>
-            </div>
-            <button
-              type="button"
-              className="w-full cursor-pointer rounded-lg border-blue-50 bg-blue-400 px-8 py-2 text-2xl font-bold text-white"
-            >
+            )}
+            <button className="mt-8 w-full cursor-pointer rounded-lg border-blue-50 bg-blue-400 px-8 py-2 text-2xl font-bold text-white">
               Submit
             </button>
           </form>
@@ -152,28 +243,57 @@ export default function AnomalyPage() {
               <div className="i-tabler-refresh rounded-lg text-2xl" />
             </div>
           </div>
-          <table>
-            <thead>
+          <table className="divide-x-none w-fit divide-y-2 divide-solid divide-gray-200 text-sm">
+            <thead className="text-left">
               <tr>
-                <th>Date</th>
-                <th>Boss Name</th>
-                <th>Stage</th>
-                <th>Drop Type</th>
-                <th>Is Dropped</th>
-                <th>Modules</th>
-                <th>Equipments</th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Date
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Boss Name
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Stage
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Drop Type
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Is Dropped
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Modules
+                </th>
+                <th></th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-gray-200">
               {attempts?.map((attempt, i) => (
                 <tr key={attempt.id ?? i}>
-                  <td>{attempt.date}</td>
-                  <td>{attempt.bossName}</td>
-                  <td>{attempt.stage}</td>
-                  <td>{attempt.dropType}</td>
-                  <td>{attempt.dropped ? 'Yes' : 'No'}</td>
-                  <td>{attempt.modules}</td>
-                  <td>{attempt.equipments ? 'Yes' : 'No'}</td>
+                  <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                    {dayjs(attempt.date).format('YYYY-MM-DD')}
+                  </td>
+                  <td className="px-4 py-2 text-gray-700">
+                    {attempt.bossName}
+                  </td>
+                  <td className="px-4 py-2 text-gray-700">{attempt.stage}</td>
+                  <td className="px-4 py-2 text-gray-700">
+                    {attempt.dropType}
+                  </td>
+                  <td className="px-4 py-2 text-gray-700">
+                    {attempt.dropped ? 'Yes' : 'No'}
+                  </td>
+                  <td className="px-4 py-2 text-gray-700">{attempt.modules}</td>
+                  <td className="px-4 py-2 text-gray-700">
+                    <button
+                      className="rounded-lg border-none bg-red-600 p-2 text-white"
+                      onClick={() => {
+                        onDeleteAttempt(attempt.id ?? 0)
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
