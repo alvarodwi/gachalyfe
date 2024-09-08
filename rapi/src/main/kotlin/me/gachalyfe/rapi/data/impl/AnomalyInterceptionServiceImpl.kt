@@ -33,8 +33,8 @@ class AnomalyInterceptionServiceImpl(
             )
         val savedData = repo1.save(newData)
 
-        if (dto.equipments.isPresent) {
-            dto.equipments.get().also { e ->
+        if (dto.equipment.isPresent) {
+            dto.equipment.get().also { e ->
                 val equipment =
                     ManufacturerEquipmentEntity(
                         date = savedData.date,

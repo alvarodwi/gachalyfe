@@ -1,10 +1,13 @@
 package me.gachalyfe.rapi.controller
 
 import jakarta.validation.Valid
+import me.gachalyfe.rapi.data.dto.ApiResponse
 import me.gachalyfe.rapi.data.dto.SpecialInterceptionDTO
+import me.gachalyfe.rapi.data.dto.buildResponse
 import me.gachalyfe.rapi.domain.model.SpecialInterception
 import me.gachalyfe.rapi.domain.service.SpecialInterceptionService
 import me.gachalyfe.rapi.utils.lazyLogger
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,44 +26,64 @@ class SpecialInterceptionController(
     private val log by lazyLogger()
 
     @GetMapping
-    fun getLast10(): ResponseEntity<List<SpecialInterception>> {
-        val data = service.getAttempts()
-        return ResponseEntity.ok(data)
+    fun getLast10(): ResponseEntity<ApiResponse<List<SpecialInterception>>> {
+        val response = ApiResponse.Success(
+            status = HttpStatus.OK.value(),
+            message = "Data retrieved successfully",
+            data = service.getAttempts()
+        )
+        return response.buildResponse()
     }
 
     @GetMapping("{id}")
     fun getById(
         @PathVariable("id") id: Long,
-    ): ResponseEntity<SpecialInterception> {
-        val data = service.getAttempt(id)
-        return ResponseEntity.ok(data)
+    ): ResponseEntity<ApiResponse<SpecialInterception>> {
+        val response = ApiResponse.Success(
+            status = HttpStatus.OK.value(),
+            message = "Data retrieved successfully",
+            data = service.getAttempt(id)
+        )
+        return response.buildResponse()
     }
 
     @PostMapping
     fun create(
         @Valid @RequestBody dto: SpecialInterceptionDTO,
-    ): ResponseEntity<SpecialInterception> {
-        val newAttempt = service.createAttempt(dto)
+    ): ResponseEntity<ApiResponse<SpecialInterception>> {
+        val response = ApiResponse.Success(
+            status = HttpStatus.CREATED.value(),
+            message = "Data created successfully",
+            data = service.createAttempt(dto)
+        )
         log.info("Created new anomaly interception attempt for ${dto.date} against ${dto.bossName}")
-        return ResponseEntity.ok(newAttempt)
+        return response.buildResponse()
     }
 
     @PutMapping("{id}")
     fun update(
         @PathVariable("id") id: Long,
         @Valid @RequestBody dto: SpecialInterceptionDTO,
-    ): ResponseEntity<SpecialInterception> {
-        val status = service.updateAttempt(id, dto)
+    ): ResponseEntity<ApiResponse<SpecialInterception>> {
+        val response = ApiResponse.Success(
+            status = HttpStatus.OK.value(),
+            message = "Data updated successfully",
+            data = service.updateAttempt(id, dto)
+        )
         log.info("Updated anomaly interception attempt with id $id on ${dto.date}")
-        return ResponseEntity.ok(status)
+        return response.buildResponse()
     }
 
     @DeleteMapping("{id}")
     fun delete(
         @PathVariable("id") id: Long,
-    ): ResponseEntity<Boolean> {
-        val status = service.deleteAttempt(id)
+    ): ResponseEntity<ApiResponse<Boolean>> {
+        val response = ApiResponse.Success(
+            status = HttpStatus.ACCEPTED.value(),
+            message = "Data deleted successfully",
+            data = service.deleteAttempt(id)
+        )
         log.info("Deleted anomaly interception attempt with id $id")
-        return ResponseEntity.ok(status)
+        return response.buildResponse()
     }
 }

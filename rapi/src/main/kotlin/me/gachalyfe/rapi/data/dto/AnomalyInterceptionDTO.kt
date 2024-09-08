@@ -20,5 +20,5 @@ data class AnomalyInterceptionDTO(
     @field:Min(0) @field:Max(3)
     val modules: Int,
     @field:Valid
-    val equipments: Optional<ManufacturerEquipmentDTO> = Optional.empty(),
+    val equipment: Optional<ManufacturerEquipmentDTO> = Optional.empty(),
 )
