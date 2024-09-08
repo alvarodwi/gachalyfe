@@ -24,7 +24,7 @@ export default function ManufacturerEquipmentForm({
       setData({ ...data, slotType: dropType })
     }
     onChange(data)
-  }, [data, dropType, setData])
+  }, [data, dropType, setData, onChange])
 
   return (
     <div className={cx(className, 'flex w-full flex-row gap-4 py-2')}>
@@ -70,19 +70,12 @@ export default function ManufacturerEquipmentForm({
           onChange={(event) => {
             setData({ ...data, slotType: event.target.value })
           }}
+          value={dropType}
         >
-          <option selected={dropType == 'Helmet'} value="Helmet">
-            Helmet
-          </option>
-          <option selected={dropType == 'Gloves'} value="Gloves">
-            Gloves
-          </option>
-          <option selected={dropType == 'Torso'} value="Torso">
-            Torso
-          </option>
-          <option selected={dropType == 'Boots'} value="Boots">
-            Boots
-          </option>
+          <option value="Helmet">Helmet</option>
+          <option value="Gloves">Gloves</option>
+          <option value="Torso">Torso</option>
+          <option value="Boots">Boots</option>
         </select>
       </div>
     </div>
