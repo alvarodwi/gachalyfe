@@ -1,11 +1,13 @@
 spring:
+  config:
+    additional-location: optional:file:/app/config/application.yml
   application:
     name: gachalyfe
   datasource:
     url: jdbc:sqlite:file:rapi.sqlite
   jpa:
     hibernate:
-        ddl-auto: validate
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.community.dialect.SQLiteDialect

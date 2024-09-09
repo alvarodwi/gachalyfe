@@ -27,11 +27,12 @@ class SpecialInterceptionController(
 
     @GetMapping
     fun getLast10(): ResponseEntity<ApiResponse<List<SpecialInterception>>> {
-        val response = ApiResponse.Success(
-            status = HttpStatus.OK.value(),
-            message = "Data retrieved successfully",
-            data = service.getAttempts()
-        )
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.OK.value(),
+                message = "Data retrieved successfully",
+                data = service.getAttempts(),
+            )
         return response.buildResponse()
     }
 
@@ -39,11 +40,12 @@ class SpecialInterceptionController(
     fun getById(
         @PathVariable("id") id: Long,
     ): ResponseEntity<ApiResponse<SpecialInterception>> {
-        val response = ApiResponse.Success(
-            status = HttpStatus.OK.value(),
-            message = "Data retrieved successfully",
-            data = service.getAttempt(id)
-        )
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.OK.value(),
+                message = "Data retrieved successfully",
+                data = service.getAttempt(id),
+            )
         return response.buildResponse()
     }
 
@@ -51,11 +53,12 @@ class SpecialInterceptionController(
     fun create(
         @Valid @RequestBody dto: SpecialInterceptionDTO,
     ): ResponseEntity<ApiResponse<SpecialInterception>> {
-        val response = ApiResponse.Success(
-            status = HttpStatus.CREATED.value(),
-            message = "Data created successfully",
-            data = service.createAttempt(dto)
-        )
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.CREATED.value(),
+                message = "Data created successfully",
+                data = service.createAttempt(dto),
+            )
         log.info("Created new anomaly interception attempt for ${dto.date} against ${dto.bossName}")
         return response.buildResponse()
     }
@@ -65,11 +68,12 @@ class SpecialInterceptionController(
         @PathVariable("id") id: Long,
         @Valid @RequestBody dto: SpecialInterceptionDTO,
     ): ResponseEntity<ApiResponse<SpecialInterception>> {
-        val response = ApiResponse.Success(
-            status = HttpStatus.OK.value(),
-            message = "Data updated successfully",
-            data = service.updateAttempt(id, dto)
-        )
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.OK.value(),
+                message = "Data updated successfully",
+                data = service.updateAttempt(id, dto),
+            )
         log.info("Updated anomaly interception attempt with id $id on ${dto.date}")
         return response.buildResponse()
     }
@@ -78,11 +82,12 @@ class SpecialInterceptionController(
     fun delete(
         @PathVariable("id") id: Long,
     ): ResponseEntity<ApiResponse<Boolean>> {
-        val response = ApiResponse.Success(
-            status = HttpStatus.ACCEPTED.value(),
-            message = "Data deleted successfully",
-            data = service.deleteAttempt(id)
-        )
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.ACCEPTED.value(),
+                message = "Data deleted successfully",
+                data = service.deleteAttempt(id),
+            )
         log.info("Deleted anomaly interception attempt with id $id")
         return response.buildResponse()
     }

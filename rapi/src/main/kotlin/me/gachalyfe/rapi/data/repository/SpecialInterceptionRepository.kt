@@ -11,6 +11,9 @@ interface SpecialInterceptionRepository : JpaRepository<SpecialInterceptionEntit
     fun findLast10(): List<SpecialInterceptionEntity>
 
     @Query("select s from special_interceptions s where date = :date and t9ManufacturerEquipment > 0")
-    fun findByDateAndEquipmentDrops(@Param("date") date: String): Optional<SpecialInterceptionEntity>
+    fun findByDateAndEquipmentDrops(
+        @Param("date") date: String,
+    ): Optional<SpecialInterceptionEntity>
+
     fun findAllByOrderByDateAsc(): List<SpecialInterceptionEntity>
 }

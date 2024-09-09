@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.RestController
 class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException::class)
     fun handleNotFoundException(e: ResourceNotFoundException): ResponseEntity<ApiResponse<Nothing>> {
-        val response = ApiResponse.Error(
-            status = HttpStatus.NOT_FOUND.value(),
-            message = e.message ?: "There's no such resource(s)"
-        )
+        val response =
+            ApiResponse.Error(
+                status = HttpStatus.NOT_FOUND.value(),
+                message = e.message ?: "There's no such resource(s)",
+            )
         return response.buildResponse()
     }
 
@@ -28,39 +29,43 @@ class GlobalExceptionHandler {
         e.bindingResult.allErrors.map {
             message.append("${(it as FieldError).field}-> ${it.defaultMessage}\n")
         }
-        val response = ApiResponse.Error(
-            status = HttpStatus.BAD_REQUEST.value(),
-            message = message.toString()
-        )
+        val response =
+            ApiResponse.Error(
+                status = HttpStatus.BAD_REQUEST.value(),
+                message = message.toString(),
+            )
 
         return response.buildResponse()
     }
 
     @ExceptionHandler(MissingServletRequestParameterException::class)
     fun handleMissingParams(e: MissingServletRequestParameterException): ResponseEntity<ApiResponse<Nothing>> {
-        val response = ApiResponse.Error(
-            status = HttpStatus.BAD_REQUEST.value(),
-            message = "Missing required parameter: ${e.parameterName}"
-        )
+        val response =
+            ApiResponse.Error(
+                status = HttpStatus.BAD_REQUEST.value(),
+                message = "Missing required parameter: ${e.parameterName}",
+            )
         return response.buildResponse()
     }
 
     @ExceptionHandler(CsvHandlingException::class)
     fun handleCsvErrors(e: CsvHandlingException): ResponseEntity<ApiResponse<Nothing>> {
-        val response = ApiResponse.Error(
-            status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
-            message = e.message ?: "An error occurred during csv processing"
-        )
+        val response =
+            ApiResponse.Error(
+                status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                message = e.message ?: "An error occurred during csv processing",
+            )
         return response.buildResponse()
     }
 
     @ExceptionHandler(Exception::class)
     fun handleGenericException(e: Exception): ResponseEntity<ApiResponse<Nothing>> {
         e.printStackTrace()
-        val response = ApiResponse.Error(
-            status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
-            message = "${e.javaClass.canonicalName}: ${e.message}"
-        )
+        val response =
+            ApiResponse.Error(
+                status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                message = "${e.javaClass.canonicalName}: ${e.message}",
+            )
 
         return response.buildResponse()
     }

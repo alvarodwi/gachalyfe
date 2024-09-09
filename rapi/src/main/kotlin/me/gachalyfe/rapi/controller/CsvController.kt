@@ -24,32 +24,33 @@ class CsvController(
     @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun importCsv(
         @RequestPart("file") file: MultipartFile,
-        @RequestParam("target") target: String
+        @RequestParam("target") target: String,
     ): ResponseEntity<ApiResponse<Boolean>> {
         if (file.isEmpty) {
-            return ApiResponse.Error(
-                status = HttpStatus.BAD_REQUEST.value(),
-                message = "CSV file is empty"
-            ).buildResponse()
+            return ApiResponse
+                .Error(
+                    status = HttpStatus.BAD_REQUEST.value(),
+                    message = "CSV file is empty",
+                ).buildResponse()
         }
 
-        return ApiResponse.Success(
-            status = HttpStatus.OK.value(),
-            message = "CSV imported successfully",
-            data = service.importFile(file, target)
-        ).buildResponse()
-
+        return ApiResponse
+            .Success(
+                status = HttpStatus.OK.value(),
+                message = "CSV imported successfully",
+                data = service.importFile(file, target),
+            ).buildResponse()
     }
 
     @GetMapping
     @Throws(IllegalStateException::class)
     fun exportCsv(
         @RequestParam("target") target: String,
-        response: HttpServletResponse
-    ): ResponseEntity<ByteArray> {
-        return ResponseEntity.ok()
+        response: HttpServletResponse,
+    ): ResponseEntity<ByteArray> =
+        ResponseEntity
+            .ok()
             .contentType(MediaType("text", "csv"))
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=export-$target.csv")
             .body(service.exportFile(target))
-    }
 }

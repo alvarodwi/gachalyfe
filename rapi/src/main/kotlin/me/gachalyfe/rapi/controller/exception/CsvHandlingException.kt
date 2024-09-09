@@ -1,5 +1,5 @@
 package me.gachalyfe.rapi.controller.exception
 
 class CsvHandlingException(
-    message: String
+    message: String,
 ) : Exception(message)

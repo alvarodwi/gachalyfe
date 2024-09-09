@@ -32,9 +32,12 @@ class CsvServiceImpl(
     private val systemDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     @Transactional
-    override fun importFile(file: MultipartFile, target: String): Boolean {
+    override fun importFile(
+        file: MultipartFile,
+        target: String,
+    ): Boolean {
         val reader = file.inputStream.bufferedReader()
-        reader.readLine() //read the header line first
+        reader.readLine() // read the header line first
         return when (target) {
             "anomaly" -> readAnomalyInterceptionData(reader)
             "special" -> readSpecialInterceptionData(reader)
@@ -47,23 +50,26 @@ class CsvServiceImpl(
         val outputStream = ByteArrayOutputStream()
         val bufferedWriter = outputStream.bufferedWriter()
         when (target) {
-            "anomaly" -> writeCsvData(
-                repo1.findAllByOrderByDateAsc(),
-                bufferedWriter,
-                listOf("id", "date", "bossName", "stage", "dropType", "dropped", "modules")
-            )
+            "anomaly" ->
+                writeCsvData(
+                    repo1.findAllByOrderByDateAsc(),
+                    bufferedWriter,
+                    listOf("id", "date", "bossName", "stage", "dropType", "dropped", "modules"),
+                )
 
-            "special" -> writeCsvData(
-                repo2.findAllByOrderByDateAsc(),
-                bufferedWriter,
-                listOf("id", "date", "bossName", "t9Equipment", "t9ManufacturerEquipment", "modules", "empty")
-            )
+            "special" ->
+                writeCsvData(
+                    repo2.findAllByOrderByDateAsc(),
+                    bufferedWriter,
+                    listOf("id", "date", "bossName", "t9Equipment", "t9ManufacturerEquipment", "modules", "empty"),
+                )
 
-            "equipment" -> writeCsvData(
-                repo3.findAllByOrderByDateAsc(),
-                bufferedWriter,
-                listOf("id", "date", "source", "manufacturer", "classType", "slotType")
-            )
+            "equipment" ->
+                writeCsvData(
+                    repo3.findAllByOrderByDateAsc(),
+                    bufferedWriter,
+                    listOf("id", "date", "source", "manufacturer", "classType", "slotType"),
+                )
 
             else -> throw CsvHandlingException("CSV export target unknown")
         }
@@ -73,77 +79,85 @@ class CsvServiceImpl(
     private inline fun <reified T : Any> writeCsvData(
         data: List<T>,
         writer: BufferedWriter,
-        propertyOrder: List<String>
+        propertyOrder: List<String>,
     ) {
         if (data.isEmpty()) throw CsvHandlingException("Target data is empty, nothing to export")
         writer.write(propertyOrder.joinToString(","))
         writer.newLine()
         data.forEach { item ->
-            val values = propertyOrder.map { name ->
-                T::class.memberProperties.first { it.name == name }
-                    .get(item)
-                    .toString()
-            }
+            val values =
+                propertyOrder.map { name ->
+                    T::class
+                        .memberProperties
+                        .first { it.name == name }
+                        .get(item)
+                        .toString()
+                }
             writer.write(values.joinToString(","))
             writer.newLine()
         }
         writer.flush()
     }
 
-
     private fun readAnomalyInterceptionData(reader: BufferedReader): Boolean {
-        val data: List<AnomalyInterceptionEntity> = reader.lineSequence()
-            .filter { it.isNotBlank() }
-            .map {
-                val line = it.split(",", ignoreCase = false, limit = 6)
-                AnomalyInterceptionEntity(
-                    date = LocalDate.parse(line[0], csvDateFormatter).format(systemDateFormatter),
-                    bossName = line[1],
-                    stage = line[2].toInt(),
-                    dropType = line[3],
-                    dropped = line[4] == "Yes",
-                    modules = line[5].toInt()
-                )
-            }.toList()
+        val data: List<AnomalyInterceptionEntity> =
+            reader
+                .lineSequence()
+                .filter { it.isNotBlank() }
+                .map {
+                    val line = it.split(",", ignoreCase = false, limit = 6)
+                    AnomalyInterceptionEntity(
+                        date = LocalDate.parse(line[0], csvDateFormatter).format(systemDateFormatter),
+                        bossName = line[1],
+                        stage = line[2].toInt(),
+                        dropType = line[3],
+                        dropped = line[4] == "Yes",
+                        modules = line[5].toInt(),
+                    )
+                }.toList()
         log.info("imported ${data.size} anomaly interception entries")
         repo1.saveAll(data)
         return true
     }
 
     private fun readSpecialInterceptionData(reader: BufferedReader): Boolean {
-        val data: List<SpecialInterceptionEntity> = reader.lineSequence()
-            .filter { it.isNotBlank() }
-            .map {
-                val line = it.split(",", ignoreCase = false, limit = 6)
-                SpecialInterceptionEntity(
-                    date = LocalDate.parse(line[0], csvDateFormatter).format(systemDateFormatter),
-                    bossName = line[1],
-                    t9Equipment = line[2].toInt(),
-                    t9ManufacturerEquipment = line[3].toInt(),
-                    modules = line[4].toInt(),
-                    empty = line[5].toInt()
-                )
-            }.toList()
+        val data: List<SpecialInterceptionEntity> =
+            reader
+                .lineSequence()
+                .filter { it.isNotBlank() }
+                .map {
+                    val line = it.split(",", ignoreCase = false, limit = 6)
+                    SpecialInterceptionEntity(
+                        date = LocalDate.parse(line[0], csvDateFormatter).format(systemDateFormatter),
+                        bossName = line[1],
+                        t9Equipment = line[2].toInt(),
+                        t9ManufacturerEquipment = line[3].toInt(),
+                        modules = line[4].toInt(),
+                        empty = line[5].toInt(),
+                    )
+                }.toList()
         log.info("imported ${data.size} special interception entries")
         repo2.saveAll(data)
         return true
     }
 
     private fun readManufacturerEquipmentData(reader: BufferedReader): Boolean {
-        val data: List<ManufacturerEquipmentEntity> = reader.lineSequence()
-            .filter { it.isNotBlank() }
-            .map {
-                val line = it.split(",", ignoreCase = false, limit = 5)
+        val data: List<ManufacturerEquipmentEntity> =
+            reader
+                .lineSequence()
+                .filter { it.isNotBlank() }
+                .map {
+                    val line = it.split(",", ignoreCase = false, limit = 5)
 
-                ManufacturerEquipmentEntity(
-                    date = LocalDate.parse(line[0], csvDateFormatter).format(systemDateFormatter),
-                    manufacturer = line[2],
-                    classType = line[3],
-                    slotType = line[4],
-                    sourceId = -1, //
-                    sourceType = assignSourceTypeFromString(line[1]).code,
-                )
-            }.toList()
+                    ManufacturerEquipmentEntity(
+                        date = LocalDate.parse(line[0], csvDateFormatter).format(systemDateFormatter),
+                        manufacturer = line[2],
+                        classType = line[3],
+                        slotType = line[4],
+                        sourceId = -1, //
+                        sourceType = assignSourceTypeFromString(line[1]).code,
+                    )
+                }.toList()
 
         // process sourceId
         // first for the anomaly drops
@@ -175,7 +189,8 @@ class CsvServiceImpl(
         var dropsFromSameDateCount = 0
         var tempDate = ""
         var sourceIds = emptyList<Long>()
-        return data.filter { it.sourceType == EquipmentSourceType.AI_DROPS.code }
+        return data
+            .filter { it.sourceType == EquipmentSourceType.AI_DROPS.code }
             .map { equipment ->
                 if (equipment.date == tempDate) {
                     dropsFromSameDateCount += 1
@@ -186,11 +201,14 @@ class CsvServiceImpl(
                 if (dropsFromSameDateCount == 0) {
                     sourceIds = repo1.findIdsByDateAndEquipmentDrops(equipment.date)
                     if (sourceIds.isEmpty()) {
-                        throw CsvHandlingException("There are invalid entry on the equipment with date=$tempDate, no anomaly interceptions entry saved in that date")
+                        throw CsvHandlingException(
+                            "There are invalid entry on the equipment with date=$tempDate, no anomaly interceptions entry saved in that date",
+                        )
                     }
                 } else {
-                    if (sourceIds.size <= dropsFromSameDateCount)
+                    if (sourceIds.size <= dropsFromSameDateCount) {
                         throw CsvHandlingException("There are invalid entry on the equipment with date=$tempDate")
+                    }
                 }
                 equipment.copy(sourceId = sourceIds[dropsFromSameDateCount])
             }.toList()
@@ -201,7 +219,8 @@ class CsvServiceImpl(
         var tempDate = ""
         var dropOnThatDate = 0
         var sourceId = 0L
-        return data.filter { it.sourceType == EquipmentSourceType.SI_DROPS.code }
+        return data
+            .filter { it.sourceType == EquipmentSourceType.SI_DROPS.code }
             .map { equipment ->
                 if (equipment.date == tempDate) {
                     dropsFromSameDateCount += 1
@@ -216,12 +235,16 @@ class CsvServiceImpl(
                         dropOnThatDate = it.t9ManufacturerEquipment
                     }
                     if (entryOnThatDate.isEmpty) {
-                        throw CsvHandlingException("There are invalid entry on the equipment with date=$tempDate, no special interceptions with equipment drop is saved in that date")
+                        throw CsvHandlingException(
+                            "There are invalid entry on the equipment with date=$tempDate, no special interceptions with equipment drop is saved in that date",
+                        )
                     }
-
                 } else {
-                    if (dropOnThatDate <= dropsFromSameDateCount)
-                        throw CsvHandlingException("There are invalid entry on the equipment with date=$tempDate, special interceptions on that date only dropped $dropOnThatDate times")
+                    if (dropOnThatDate <= dropsFromSameDateCount) {
+                        throw CsvHandlingException(
+                            "There are invalid entry on the equipment with date=$tempDate, special interceptions on that date only dropped $dropOnThatDate times",
+                        )
+                    }
                 }
                 equipment.copy(sourceId = sourceId)
             }.toList()

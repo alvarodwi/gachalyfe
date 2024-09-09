@@ -23,11 +23,12 @@ class ManufacturerEquipmentController(
 ) {
     @GetMapping
     fun getLast10(): ResponseEntity<ApiResponse<List<ManufacturerEquipment>>> {
-        val response = ApiResponse.Success(
-            status = HttpStatus.OK.value(),
-            message = "Data retrieved successfully",
-            data = service.getEquipments()
-        )
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.OK.value(),
+                message = "Data retrieved successfully",
+                data = service.getEquipments(),
+            )
         return response.buildResponse()
     }
 
@@ -36,11 +37,12 @@ class ManufacturerEquipmentController(
         @PathVariable("id") id: Long,
         @Valid @RequestBody dto: ManufacturerEquipmentDTO,
     ): ResponseEntity<ApiResponse<ManufacturerEquipment>> {
-        val response = ApiResponse.Success(
-            status = HttpStatus.OK.value(),
-            message = "Data updated successfully",
-            data = service.updateEquipment(id, dto)
-        )
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.OK.value(),
+                message = "Data updated successfully",
+                data = service.updateEquipment(id, dto),
+            )
         return response.buildResponse()
     }
 
@@ -48,11 +50,12 @@ class ManufacturerEquipmentController(
     fun delete(
         @PathVariable("id") id: Long,
     ): ResponseEntity<ApiResponse<Boolean>> {
-        val response = ApiResponse.Success(
-            status = HttpStatus.ACCEPTED.value(),
-            message = "Data deleted successfully",
-            data = service.deleteEquipment(id)
-        )
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.ACCEPTED.value(),
+                message = "Data deleted successfully",
+                data = service.deleteEquipment(id),
+            )
         return response.buildResponse()
     }
 }

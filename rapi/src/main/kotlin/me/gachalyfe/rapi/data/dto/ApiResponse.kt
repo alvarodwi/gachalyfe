@@ -5,11 +5,11 @@ import me.gachalyfe.rapi.data.dto.ApiResponse.Success
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 
-sealed class ApiResponse<out T>() {
+sealed class ApiResponse<out T> {
     data class Success<out T>(
         val status: Int,
         val message: String,
-        val data: T
+        val data: T,
     ) : ApiResponse<T>()
 
     data class Error(
