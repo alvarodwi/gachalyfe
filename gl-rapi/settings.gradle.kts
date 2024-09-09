@@ -1,1 +1,1 @@
-rootProject.name = "rapi"
+rootProject.name = "gl-rapi"

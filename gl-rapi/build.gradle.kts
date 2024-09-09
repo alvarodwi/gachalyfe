@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "me.gachalyfe"
-version = "0.0.1"
+version = "0.1.0"
 
 
 java {
@@ -54,4 +54,10 @@ tasks.withType<Test> {
 kotlinter {
     ignoreFailures = false
     reporters = arrayOf("checkstyle", "plain")
+}
+
+tasks.withType<Jar>() {
+    enabled = true
+    archiveClassifier = ""
+    archiveFileName.set("${project.name}.jar")
 }
