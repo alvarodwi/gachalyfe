@@ -11,7 +11,7 @@ import Breadcrumb from '@components/Breadcrumb'
 import { includes, some } from 'lodash'
 
 export default function ImporterPage() {
-  const api = useApi().importer
+  const api = useApi().csv
   const crumbs: BreadcrumbLink[] = [
     { title: 'Home', to: '/' },
     { title: 'Rapi', to: '/rapi' },
@@ -28,6 +28,9 @@ export default function ImporterPage() {
   } = useForm<ImporterFile>({
     resolver: zodResolver(schema),
   })
+  const { register: register2, handleSubmit: handleSubmit2 } = useForm<{
+    target: string
+  }>()
 
   const [tableRows, setTableRows] = useState<string[]>([])
   const [tableValues, setTableValues] = useState<string[][]>([[]])
@@ -78,8 +81,11 @@ export default function ImporterPage() {
     })
   }
 
+  async function onExport(obj: { target: string }) {
+    await api.exportFile(obj.target)
+  }
+
   async function onSubmit(data: ImporterFile) {
-    console.log(data)
     const response = await api.importFile(data)
     if (response.status == 200) {
       alert(response.message)
@@ -122,7 +128,7 @@ export default function ImporterPage() {
           </div>
 
           <div className="w-fit">
-            <label htmlFor="bossName" className="block">
+            <label htmlFor="target" className="block">
               Import type
             </label>
             <select
@@ -198,6 +204,39 @@ export default function ImporterPage() {
             Please upload a file first
           </span>
         )}
+      </div>
+      <div className="min-h-full w-1/4 flex-col items-start justify-start p-4">
+        <h1 className="mb-2">Export Data</h1>
+        <span className="mb-8 block text-sm">
+          You can also export data for backup purpose or just to check the
+          recommended csv format
+        </span>
+
+        <form
+          onSubmit={handleSubmit2(onExport)}
+          className="flex w-full flex-col gap-4"
+        >
+          <div className="w-fit">
+            <label htmlFor="target" className="block">
+              Export type
+            </label>
+            <select
+              className="mt-1 w-fit rounded-md border-gray-200 shadow-sm sm:text-sm"
+              {...register2('target')}
+            >
+              <option value="anomaly">Anomaly Interceptions</option>
+              <option value="special">Special Interceptions</option>
+              <option value="equipment">Manufacturer Equipments</option>
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            className="bg-indigo w-fit rounded border-none px-3 py-2 text-white"
+          >
+            Export
+          </button>
+        </form>
       </div>
     </main>
   )

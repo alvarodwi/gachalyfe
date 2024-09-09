@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestController
@@ -32,6 +33,24 @@ class GlobalExceptionHandler {
             message = message.toString()
         )
 
+        return response.buildResponse()
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException::class)
+    fun handleMissingParams(e: MissingServletRequestParameterException): ResponseEntity<ApiResponse<Nothing>> {
+        val response = ApiResponse.Error(
+            status = HttpStatus.BAD_REQUEST.value(),
+            message = "Missing required parameter: ${e.parameterName}"
+        )
+        return response.buildResponse()
+    }
+
+    @ExceptionHandler(CsvHandlingException::class)
+    fun handleCsvErrors(e: CsvHandlingException): ResponseEntity<ApiResponse<Nothing>> {
+        val response = ApiResponse.Error(
+            status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            message = e.message ?: "An error occurred during csv processing"
+        )
         return response.buildResponse()
     }
 

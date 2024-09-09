@@ -1,11 +1,14 @@
 package me.gachalyfe.rapi.controller
 
+import jakarta.servlet.http.HttpServletResponse
 import me.gachalyfe.rapi.data.dto.ApiResponse
 import me.gachalyfe.rapi.data.dto.buildResponse
-import me.gachalyfe.rapi.domain.service.ImporterService
+import me.gachalyfe.rapi.domain.service.CsvService
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -15,10 +18,10 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("api/csv")
-class ImporterController(
-    private val service: ImporterService,
+class CsvController(
+    private val service: CsvService,
 ) {
-    @PostMapping("import", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    @PostMapping(consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun importCsv(
         @RequestPart("file") file: MultipartFile,
         @RequestParam("target") target: String
@@ -36,5 +39,17 @@ class ImporterController(
             data = service.importFile(file, target)
         ).buildResponse()
 
+    }
+
+    @GetMapping
+    @Throws(IllegalStateException::class)
+    fun exportCsv(
+        @RequestParam("target") target: String,
+        response: HttpServletResponse
+    ): ResponseEntity<ByteArray> {
+        return ResponseEntity.ok()
+            .contentType(MediaType("text", "csv"))
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=export-$target.csv")
+            .body(service.exportFile(target))
     }
 }

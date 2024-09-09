@@ -14,4 +14,6 @@ interface ManufacturerEquipmentRepository : JpaRepository<ManufacturerEquipmentE
         @Param("sourceType") sourceType: Int,
         @Param("sourceId") sourceId: Long,
     ): List<ManufacturerEquipmentEntity>
+
+    fun findAllByOrderByDateAsc(): List<ManufacturerEquipmentEntity>
 }

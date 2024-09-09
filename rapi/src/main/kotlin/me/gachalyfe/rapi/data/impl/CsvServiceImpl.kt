@@ -1,6 +1,7 @@
 package me.gachalyfe.rapi.data.impl
 
 import jakarta.transaction.Transactional
+import me.gachalyfe.rapi.controller.exception.CsvHandlingException
 import me.gachalyfe.rapi.data.entity.AnomalyInterceptionEntity
 import me.gachalyfe.rapi.data.entity.ManufacturerEquipmentEntity
 import me.gachalyfe.rapi.data.entity.SpecialInterceptionEntity
@@ -8,20 +9,23 @@ import me.gachalyfe.rapi.data.repository.AnomalyInterceptionRepository
 import me.gachalyfe.rapi.data.repository.ManufacturerEquipmentRepository
 import me.gachalyfe.rapi.data.repository.SpecialInterceptionRepository
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
-import me.gachalyfe.rapi.domain.service.ImporterService
+import me.gachalyfe.rapi.domain.service.CsvService
 import me.gachalyfe.rapi.utils.lazyLogger
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.reflect.full.memberProperties
 
 @Service
-class ImporterServiceImpl(
+class CsvServiceImpl(
     private val repo1: AnomalyInterceptionRepository,
     private val repo2: SpecialInterceptionRepository,
     private val repo3: ManufacturerEquipmentRepository,
-) : ImporterService {
+) : CsvService {
     private val log by lazyLogger()
 
     private val csvDateFormatter = DateTimeFormatter.ofPattern("M/d/yyyy")
@@ -35,8 +39,55 @@ class ImporterServiceImpl(
             "anomaly" -> readAnomalyInterceptionData(reader)
             "special" -> readSpecialInterceptionData(reader)
             "equipment" -> readManufacturerEquipmentData(reader)
-            else -> throw IllegalStateException("CSV import target unknown")
+            else -> throw CsvHandlingException("CSV import target unknown")
         }
+    }
+
+    override fun exportFile(target: String): ByteArray {
+        val outputStream = ByteArrayOutputStream()
+        val bufferedWriter = outputStream.bufferedWriter()
+        when (target) {
+            "anomaly" -> writeCsvData(
+                repo1.findAllByOrderByDateAsc(),
+                bufferedWriter,
+                listOf("id", "date", "bossName", "stage", "dropType", "dropped", "modules")
+            )
+
+            "special" -> writeCsvData(
+                repo2.findAllByOrderByDateAsc(),
+                bufferedWriter,
+                listOf("id", "date", "bossName", "t9Equipment", "t9ManufacturerEquipment", "modules", "empty")
+            )
+
+            "equipment" -> writeCsvData(
+                repo3.findAllByOrderByDateAsc(),
+                bufferedWriter,
+                listOf("id", "date", "source", "manufacturer", "classType", "slotType")
+            )
+
+            else -> throw CsvHandlingException("CSV export target unknown")
+        }
+        return outputStream.toByteArray()
+    }
+
+    private inline fun <reified T : Any> writeCsvData(
+        data: List<T>,
+        writer: BufferedWriter,
+        propertyOrder: List<String>
+    ) {
+        if (data.isEmpty()) throw CsvHandlingException("Target data is empty, nothing to export")
+        writer.write(propertyOrder.joinToString(","))
+        writer.newLine()
+        data.forEach { item ->
+            val values = propertyOrder.map { name ->
+                T::class.memberProperties.first { it.name == name }
+                    .get(item)
+                    .toString()
+            }
+            writer.write(values.joinToString(","))
+            writer.newLine()
+        }
+        writer.flush()
     }
 
 
@@ -101,7 +152,7 @@ class ImporterServiceImpl(
         val armsDrops = data.filter { it.sourceType == EquipmentSourceType.ARMS.code }
         val furnaceDrops = data.filter { it.sourceType == EquipmentSourceType.FURNACE.code }
         log.info("imported ${aiDrops.size} equipment from anomaly interceptions")
-        log.info("imported ${siDrops.size} equipment from anomaly interceptions")
+        log.info("imported ${siDrops.size} equipment from special interceptions")
         log.info("imported ${armsDrops.size} equipment from opening manufacturer arms")
         log.info("imported ${furnaceDrops.size} equipment from opening manufacturer arms")
         repo3.saveAll(aiDrops)
@@ -135,11 +186,11 @@ class ImporterServiceImpl(
                 if (dropsFromSameDateCount == 0) {
                     sourceIds = repo1.findIdsByDateAndEquipmentDrops(equipment.date)
                     if (sourceIds.isEmpty()) {
-                        throw IllegalStateException("There are invalid entry on the equipment with date=$tempDate, no anomaly interceptions entry saved in that date")
+                        throw CsvHandlingException("There are invalid entry on the equipment with date=$tempDate, no anomaly interceptions entry saved in that date")
                     }
                 } else {
                     if (sourceIds.size <= dropsFromSameDateCount)
-                        throw IllegalStateException("There are invalid entry on the equipment with date=$tempDate")
+                        throw CsvHandlingException("There are invalid entry on the equipment with date=$tempDate")
                 }
                 equipment.copy(sourceId = sourceIds[dropsFromSameDateCount])
             }.toList()
@@ -165,12 +216,12 @@ class ImporterServiceImpl(
                         dropOnThatDate = it.t9ManufacturerEquipment
                     }
                     if (entryOnThatDate.isEmpty) {
-                        throw IllegalStateException("There are invalid entry on the equipment with date=$tempDate, no special interceptions with equipment drop is saved in that date")
+                        throw CsvHandlingException("There are invalid entry on the equipment with date=$tempDate, no special interceptions with equipment drop is saved in that date")
                     }
 
                 } else {
                     if (dropOnThatDate <= dropsFromSameDateCount)
-                        throw IllegalStateException("There are invalid entry on the equipment with date=$tempDate, special interceptions on that date only dropped $dropOnThatDate times")
+                        throw CsvHandlingException("There are invalid entry on the equipment with date=$tempDate, special interceptions on that date only dropped $dropOnThatDate times")
                 }
                 equipment.copy(sourceId = sourceId)
             }.toList()

@@ -11,4 +11,5 @@ interface AnomalyInterceptionRepository : JpaRepository<AnomalyInterceptionEntit
 
     @Query("select a.id from anomaly_interceptions a where date = :date and dropped = true and dropType != 'Modules'")
     fun findIdsByDateAndEquipmentDrops(@Param("date") date: String): List<Long>
+    fun findAllByOrderByDateAsc(): List<AnomalyInterceptionEntity>
 }
