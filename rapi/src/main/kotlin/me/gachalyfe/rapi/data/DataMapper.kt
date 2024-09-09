@@ -39,5 +39,6 @@ object DataMapper {
             t9Equipment = t9Equipment,
             modules = modules,
             t9ManufacturerEquipment = t9ManufacturerEquipment,
+            empty = empty
         )
 }

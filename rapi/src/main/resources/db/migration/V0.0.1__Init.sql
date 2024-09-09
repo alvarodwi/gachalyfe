@@ -16,7 +16,8 @@ create table special_interceptions(
   boss_name varchar(20) not null,
   t9equipment integer not null,
   modules integer not null,
-  t9manufacturer_equipment integer not null
+  t9manufacturer_equipment integer not null,
+  empty integer not null
 );
 
 -- create manufacturer equipment table

@@ -7,5 +7,6 @@ data class SpecialInterception(
     val t9Equipment: Int,
     val modules: Int,
     val t9ManufacturerEquipment: Int,
+    val empty: Int,
     val equipments: List<ManufacturerEquipment> = emptyList(),
 )

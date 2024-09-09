@@ -17,4 +17,5 @@ data class SpecialInterceptionEntity(
     val t9Equipment: Int,
     val modules: Int,
     val t9ManufacturerEquipment: Int,
+    val empty: Int,
 )

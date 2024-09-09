@@ -25,6 +25,7 @@ class SpecialInterceptionServiceImpl(
                 t9Equipment = dto.t9Equipment,
                 modules = dto.modules,
                 t9ManufacturerEquipment = dto.t9ManufacturerEquipment,
+                empty = dto.empty
             )
         val savedData = repo1.save(newData)
 
@@ -79,6 +80,7 @@ class SpecialInterceptionServiceImpl(
                     t9Equipment = dto.t9Equipment,
                     modules = dto.modules,
                     t9ManufacturerEquipment = dto.t9ManufacturerEquipment,
+                    empty = dto.empty
                 )
             repo1.save(update)
             return update.asModel()

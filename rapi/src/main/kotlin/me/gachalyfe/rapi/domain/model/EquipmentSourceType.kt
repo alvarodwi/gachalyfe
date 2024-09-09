@@ -5,7 +5,7 @@ enum class EquipmentSourceType(
 ) {
     SI_DROPS(1),
     AI_DROPS(2),
-    GEARS(3),
+    ARMS(3),
     FURNACE(4),
     ;
 

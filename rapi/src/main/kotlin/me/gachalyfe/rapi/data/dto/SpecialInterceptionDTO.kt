@@ -16,6 +16,8 @@ data class SpecialInterceptionDTO(
     val modules: Int,
     @field:Min(0) @field:Max(6)
     val t9ManufacturerEquipment: Int,
+    @field:Min(0) @field:Max(6)
+    val empty: Int,
     @field:Valid
     val equipments: List<ManufacturerEquipmentDTO>,
 )
