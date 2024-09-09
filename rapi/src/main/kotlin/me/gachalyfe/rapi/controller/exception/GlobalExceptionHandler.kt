@@ -37,9 +37,10 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception::class)
     fun handleGenericException(e: Exception): ResponseEntity<ApiResponse<Nothing>> {
+        e.printStackTrace()
         val response = ApiResponse.Error(
             status = HttpStatus.INTERNAL_SERVER_ERROR.value(),
-            message = e.message ?: "Unhandled exception ${e.javaClass.canonicalName}"
+            message = "${e.javaClass.canonicalName}: ${e.message}"
         )
 
         return response.buildResponse()

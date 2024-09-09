@@ -146,7 +146,7 @@ export default function AnomalyPage() {
               </select>
             </div>
             <div className="i-tabler-arrow-right mt-8 text-2xl" />
-            <div className="col-span-2 w-fit">
+            <div className="w-fit">
               <label htmlFor="bossName" className="block">
                 Drop Type
               </label>
@@ -247,57 +247,67 @@ export default function AnomalyPage() {
             <div className="i-tabler-refresh rounded-lg text-2xl" />
           </div>
         </div>
-        <table className="divide-x-none w-fit divide-y-2 divide-solid divide-gray-200 text-sm">
-          <thead className="text-left">
-            <tr>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                Date
-              </th>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                Boss Name
-              </th>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                Stage
-              </th>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                Drop Type
-              </th>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                Is Dropped
-              </th>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                Modules
-              </th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {attempts?.map((attempt, i) => (
-              <tr key={attempt.id ?? i}>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                  {dayjs(attempt.date).format('YYYY-MM-DD')}
-                </td>
-                <td className="px-4 py-2 text-gray-700">{attempt.bossName}</td>
-                <td className="px-4 py-2 text-gray-700">{attempt.stage}</td>
-                <td className="px-4 py-2 text-gray-700">{attempt.dropType}</td>
-                <td className="px-4 py-2 text-gray-700">
-                  {attempt.dropped ? 'Yes' : 'No'}
-                </td>
-                <td className="px-4 py-2 text-gray-700">{attempt.modules}</td>
-                <td className="px-4 py-2 text-gray-700">
-                  <button
-                    className="rounded-lg border-none bg-red-600 p-2 text-white"
-                    onClick={() => {
-                      onDeleteAttempt(attempt.id ?? 0)
-                    }}
-                  >
-                    Delete
-                  </button>
-                </td>
+        {attempts && attempts.length > 0 ? (
+          <table className="divide-x-none w-fit divide-y-2 divide-solid divide-gray-200 text-sm">
+            <thead className="text-left">
+              <tr>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Date
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Boss Name
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Stage
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Drop Type
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Is Dropped
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Modules
+                </th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {attempts?.map((attempt, i) => (
+                <tr key={attempt.id ?? i}>
+                  <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                    {dayjs(attempt.date).format('YYYY-MM-DD')}
+                  </td>
+                  <td className="px-4 py-2 text-gray-700">
+                    {attempt.bossName}
+                  </td>
+                  <td className="px-4 py-2 text-gray-700">{attempt.stage}</td>
+                  <td className="px-4 py-2 text-gray-700">
+                    {attempt.dropType}
+                  </td>
+                  <td className="px-4 py-2 text-gray-700">
+                    {attempt.dropped ? 'Yes' : 'No'}
+                  </td>
+                  <td className="px-4 py-2 text-gray-700">{attempt.modules}</td>
+                  <td className="px-4 py-2 text-gray-700">
+                    <button
+                      className="rounded-lg border-none bg-red-600 p-2 text-white"
+                      onClick={() => {
+                        onDeleteAttempt(attempt.id ?? 0)
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <span className="text-red mr-4 mt-4 text-2xl">
+            No attempts recorded
+          </span>
+        )}
       </div>
     </main>
   )

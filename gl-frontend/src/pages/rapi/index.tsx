@@ -24,8 +24,13 @@ export default function RapiPage() {
             height={200}
             title="rapi-icon"
           />
-          <h1 className="mb-2 mt-4 w-full text-6xl">Rapi</h1>
-          <p className="w-full text-gray-500">Tracking NIKKE account data</p>
+          <h1 className="mb-2 mt-4 w-full flex-none text-6xl">Rapi</h1>
+          <p className="w-full flex-none text-gray-500">
+            Tracking NIKKE account data
+          </p>
+          <Link to={'importer'}>
+            <p>Import data</p>
+          </Link>
         </div>
 
         <div className="m-16 flex w-full flex-col justify-start gap-8">

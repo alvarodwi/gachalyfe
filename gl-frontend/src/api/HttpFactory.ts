@@ -22,7 +22,7 @@ class HttpFactory {
     const $res: FetchResponse<T> = await this.$fetch(url, {
       method,
       body: body,
-      ...extras,
+      ...extras, ignoreResponseError: true
     })
     return $res
   }

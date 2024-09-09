@@ -1,25 +1,40 @@
 package me.gachalyfe.rapi.controller
 
+import me.gachalyfe.rapi.data.dto.ApiResponse
+import me.gachalyfe.rapi.data.dto.buildResponse
 import me.gachalyfe.rapi.domain.service.ImporterService
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("api/csv")
 class ImporterController(
     private val service: ImporterService,
 ) {
-    @PostMapping("/import/anomaly-interceptions")
-    fun importAnomalyInterceptionCsv() {
-        TODO()
-    }
+    @PostMapping("import", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
+    fun importCsv(
+        @RequestPart("file") file: MultipartFile,
+        @RequestParam("target") target: String
+    ): ResponseEntity<ApiResponse<Boolean>> {
+        if (file.isEmpty) {
+            return ApiResponse.Error(
+                status = HttpStatus.BAD_REQUEST.value(),
+                message = "CSV file is empty"
+            ).buildResponse()
+        }
 
-    @PostMapping("/import/special-interceptions")
-    fun importSpecialInterceptionCsv() {
-    }
+        return ApiResponse.Success(
+            status = HttpStatus.OK.value(),
+            message = "CSV imported successfully",
+            data = service.importFile(file, target)
+        ).buildResponse()
 
-    @PostMapping("/import/manufacturer-equipments")
-    fun importManufacturerEquipments() {
     }
 }

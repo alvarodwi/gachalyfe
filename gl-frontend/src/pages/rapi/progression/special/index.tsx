@@ -66,6 +66,10 @@ export default function SpecialPage() {
     }
   }, [setEquipmentCount, t9Manu, equipmentCount, setValue])
 
+  useEffect(() => {
+    loadAttempts()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   async function onSubmit(data: SpecialInterception) {
     const response = await api.createNew(data)
     if (response.status == 201) {
@@ -213,55 +217,63 @@ export default function SpecialPage() {
             <div className="i-tabler-refresh rounded-lg text-2xl" />
           </div>
         </div>
-        <table className="divide-x-none w-fit divide-y-2 divide-solid divide-gray-200 text-sm">
-          <thead className="text-left">
-            <tr>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                Date
-              </th>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                Boss Name
-              </th>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                Fodder Equip
-              </th>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                Manufacturer Equip
-              </th>
-              <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
-                Modules
-              </th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {attempts?.map((attempt, i) => (
-              <tr key={attempt.id ?? i}>
-                <td className="whitespace-nowrap px-4 py-2 text-gray-700">
-                  {dayjs(attempt.date).format('YYYY-MM-DD')}
-                </td>
-                <td className="px-4 py-2 text-gray-700">{attempt.bossName}</td>
-                <td className="px-4 py-2 text-gray-700">
-                  {attempt.t9Equipment}
-                </td>
-                <td className="px-4 py-2 text-gray-700">
-                  {attempt.t9ManufacturerEquipment}
-                </td>
-                <td className="px-4 py-2 text-gray-700">{attempt.modules}</td>
-                <td className="px-4 py-2 text-gray-700">
-                  <button
-                    className="rounded-lg border-none bg-red-600 p-2 text-white"
-                    onClick={() => {
-                      onDeleteAttempt(attempt.id ?? 0)
-                    }}
-                  >
-                    Delete
-                  </button>
-                </td>
+        {attempts && attempts.length > 0 ? (
+          <table className="divide-x-none w-fit divide-y-2 divide-solid divide-gray-200 text-sm">
+            <thead className="text-left">
+              <tr>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Date
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Boss Name
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Fodder Equip
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Manufacturer Equip
+                </th>
+                <th className="whitespace-nowrap px-4 py-2 font-medium text-gray-900">
+                  Modules
+                </th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {attempts?.map((attempt, i) => (
+                <tr key={attempt.id ?? i}>
+                  <td className="whitespace-nowrap px-4 py-2 text-gray-700">
+                    {dayjs(attempt.date).format('YYYY-MM-DD')}
+                  </td>
+                  <td className="px-4 py-2 text-gray-700">
+                    {attempt.bossName}
+                  </td>
+                  <td className="px-4 py-2 text-gray-700">
+                    {attempt.t9Equipment}
+                  </td>
+                  <td className="px-4 py-2 text-gray-700">
+                    {attempt.t9ManufacturerEquipment}
+                  </td>
+                  <td className="px-4 py-2 text-gray-700">{attempt.modules}</td>
+                  <td className="px-4 py-2 text-gray-700">
+                    <button
+                      className="rounded-lg border-none bg-red-600 p-2 text-white"
+                      onClick={() => {
+                        onDeleteAttempt(attempt.id ?? 0)
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <span className="text-red mr-4 mt-4 text-2xl">
+            No attempts recorded
+          </span>
+        )}
       </div>
     </main>
   )
