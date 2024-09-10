@@ -1,7 +1,8 @@
 package me.gachalyfe.rapi.service.equipment
 
 import me.gachalyfe.rapi.data.entity.ManufacturerEquipmentEntity
-import me.gachalyfe.rapi.data.mapper.EquipmentMapper
+import me.gachalyfe.rapi.data.mapper.toEntity
+import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.data.repository.ManufacturerEquipmentRepository
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
@@ -13,11 +14,10 @@ import org.springframework.stereotype.Service
 @Service
 class ManufacturerEquipmentServiceImpl(
     private val repository: ManufacturerEquipmentRepository,
-    private val mapper: EquipmentMapper,
 ) : ManufacturerEquipmentService {
     override fun getEquipments(): List<ManufacturerEquipment> {
         val data = repository.findLast10()
-        return data.map { mapper.toModel(it) }
+        return data.map { it.toModel() }
     }
 
     override fun getEquipmentsBySourceIdAndSourceType(
@@ -28,12 +28,12 @@ class ManufacturerEquipmentServiceImpl(
             .findBySourceIdAndSourceType(
                 sourceId = sourceId,
                 sourceType = sourceType.ordinal,
-            ).map(mapper::toModel)
+            ).map { it.toModel() }
 
     override fun createEquipment(model: ManufacturerEquipment): ManufacturerEquipment {
-        val newEquipment = mapper.toEntity(model)
+        val newEquipment = model.toEntity()
         val saved = repository.save(newEquipment)
-        return mapper.toModel(saved)
+        return saved.toModel()
     }
 
     override fun updateEquipment(
@@ -52,7 +52,7 @@ class ManufacturerEquipmentServiceImpl(
                 sourceType = data.sourceType,
             )
         repository.save(update)
-        return mapper.toModel(update)
+        return update.toModel()
     }
 
     override fun deleteEquipment(id: Long): Boolean {

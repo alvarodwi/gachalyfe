@@ -1,7 +1,6 @@
 package me.gachalyfe.rapi.service.interception
 
 import me.gachalyfe.rapi.data.entity.AnomalyInterceptionEntity
-import me.gachalyfe.rapi.data.mapper.InterceptionMapper
 import me.gachalyfe.rapi.data.repository.AnomalyInterceptionRepository
 import me.gachalyfe.rapi.domain.model.AnomalyInterception
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
@@ -11,15 +10,16 @@ import me.gachalyfe.rapi.domain.service.ManufacturerEquipmentService
 import me.gachalyfe.rapi.utils.exception.ResourceNotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import toEntity
+import toModel
 
 @Service
 class AnomalyInterceptionServiceImpl(
     private val repository: AnomalyInterceptionRepository,
-    private val mapper: InterceptionMapper,
     private val equipmentService: ManufacturerEquipmentService,
 ) : AnomalyInterceptionService {
     override fun createAttempt(model: AnomalyInterception): AnomalyInterception {
-        val newData: AnomalyInterceptionEntity = mapper.toEntity(model)
+        val newData: AnomalyInterceptionEntity = model.toEntity()
         val savedData = repository.save(newData)
 
         model.equipment?.let { equipment ->
@@ -33,14 +33,14 @@ class AnomalyInterceptionServiceImpl(
                     sourceType = EquipmentSourceType.AI_DROPS,
                 )
             val savedEquipment = equipmentService.createEquipment(newEquipment)
-            return mapper.toModel(savedData).copy(equipment = savedEquipment)
+            return savedData.toModel().copy(equipment = savedEquipment)
         }
 
-        return mapper.toModel(savedData)
+        return savedData.toModel()
     }
 
     override fun getAttempts(): List<AnomalyInterception> {
-        val data = repository.findLast10().map(mapper::toModel)
+        val data = repository.findLast10().map(AnomalyInterceptionEntity::toModel)
         return data
     }
 
@@ -55,12 +55,11 @@ class AnomalyInterceptionServiceImpl(
                         sourceId = data.id,
                         sourceType = EquipmentSourceType.AI_DROPS,
                     ).first()
-            return mapper
-                .toModel(data)
+            return data.toModel()
                 .copy(equipment = equipment)
         }
 
-        return mapper.toModel(data)
+        return data.toModel()
     }
 
     override fun updateAttempt(
@@ -71,11 +70,10 @@ class AnomalyInterceptionServiceImpl(
             repository.findByIdOrNull(id)
                 ?: throw ResourceNotFoundException("There's no such anomaly interception attempt with id=$id")
         val update =
-            mapper
-                .toEntity(model)
+            model.toEntity()
                 .copy(id = data.id)
         repository.save(update)
-        return mapper.toModel(update)
+        return update.toModel()
     }
 
     override fun deleteAttempt(id: Long): Boolean {

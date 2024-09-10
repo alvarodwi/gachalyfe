@@ -1,7 +1,6 @@
 package me.gachalyfe.rapi.service.interception
 
 import me.gachalyfe.rapi.data.entity.SpecialInterceptionEntity
-import me.gachalyfe.rapi.data.mapper.InterceptionMapper
 import me.gachalyfe.rapi.data.repository.SpecialInterceptionRepository
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
@@ -11,15 +10,16 @@ import me.gachalyfe.rapi.domain.service.SpecialInterceptionService
 import me.gachalyfe.rapi.utils.exception.ResourceNotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import toEntity
+import toModel
 
 @Service
 class SpecialInterceptionServiceImpl(
     private val repository: SpecialInterceptionRepository,
-    private val mapper: InterceptionMapper,
     private val equipmentService: ManufacturerEquipmentService,
 ) : SpecialInterceptionService {
     override fun createAttempt(model: SpecialInterception): SpecialInterception {
-        val newData = mapper.toEntity(model)
+        val newData = model.toEntity()
         val savedData = repository.save(newData)
 
         if (model.equipments.isNotEmpty()) {
@@ -36,15 +36,15 @@ class SpecialInterceptionServiceImpl(
                     )
                 val newEquipment = equipmentService.createEquipment(equipment)
                 createdEquipments.add(newEquipment)
-                return mapper.toModel(savedData).copy(equipments = createdEquipments)
+                return savedData.toModel().copy(equipments = createdEquipments)
             }
         }
 
-        return mapper.toModel(savedData)
+        return savedData.toModel()
     }
 
     override fun getAttempts(): List<SpecialInterception> {
-        val data = repository.findLast10().map(mapper::toModel)
+        val data = repository.findLast10().map(SpecialInterceptionEntity::toModel)
         return data
     }
 
@@ -59,9 +59,9 @@ class SpecialInterceptionServiceImpl(
                     sourceId = id,
                     sourceType = EquipmentSourceType.SI_DROPS,
                 )
-            return mapper.toModel(data).copy(equipments = equipments)
+            return data.toModel().copy(equipments = equipments)
         } else {
-            return mapper.toModel(data)
+            return data.toModel()
         }
     }
 
@@ -84,7 +84,7 @@ class SpecialInterceptionServiceImpl(
                 empty = model.empty,
             )
         repository.save(update)
-        return mapper.toModel(update)
+        return update.toModel()
     }
 
     override fun deleteAttempt(id: Long): Boolean {

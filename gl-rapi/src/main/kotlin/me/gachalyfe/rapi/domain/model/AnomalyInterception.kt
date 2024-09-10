@@ -8,5 +8,5 @@ data class AnomalyInterception(
     val dropType: String,
     val dropped: Boolean,
     val modules: Int,
-    val equipment: ManufacturerEquipment?,
+    val equipment: ManufacturerEquipment? = null,
 )

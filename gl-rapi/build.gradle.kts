@@ -2,7 +2,6 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     kotlin("jvm") version "2.0.20"
-    kotlin("kapt") version "2.0.20"
     kotlin("plugin.spring") version "2.0.20"
     kotlin("plugin.jpa") version "2.0.20"
     id("org.springframework.boot") version "3.3.3"
@@ -28,8 +27,6 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.mapstruct:mapstruct:1.6.0")
-    kapt("org.mapstruct:mapstruct-processor:1.6.0")
 
     // spring web
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -52,10 +49,6 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict")
     }
-}
-
-kapt {
-    correctErrorTypes = true
 }
 
 tasks.withType<Test> {
