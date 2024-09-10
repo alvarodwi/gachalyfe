@@ -1,10 +1,9 @@
 package me.gachalyfe.rapi.domain.service
 
-import me.gachalyfe.rapi.data.dto.AnomalyInterceptionDTO
 import me.gachalyfe.rapi.domain.model.AnomalyInterception
 
 interface AnomalyInterceptionService {
-    fun createAttempt(dto: AnomalyInterceptionDTO): AnomalyInterception
+    fun createAttempt(model: AnomalyInterception): AnomalyInterception
 
     fun getAttempts(): List<AnomalyInterception>
 
@@ -12,7 +11,7 @@ interface AnomalyInterceptionService {
 
     fun updateAttempt(
         id: Long,
-        dto: AnomalyInterceptionDTO,
+        model: AnomalyInterception,
     ): AnomalyInterception
 
     fun deleteAttempt(id: Long): Boolean

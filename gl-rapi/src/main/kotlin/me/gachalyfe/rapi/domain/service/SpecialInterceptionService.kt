@@ -1,10 +1,9 @@
 package me.gachalyfe.rapi.domain.service
 
-import me.gachalyfe.rapi.data.dto.SpecialInterceptionDTO
 import me.gachalyfe.rapi.domain.model.SpecialInterception
 
 interface SpecialInterceptionService {
-    fun createAttempt(dto: SpecialInterceptionDTO): SpecialInterception
+    fun createAttempt(model: SpecialInterception): SpecialInterception
 
     fun getAttempts(): List<SpecialInterception>
 
@@ -12,7 +11,7 @@ interface SpecialInterceptionService {
 
     fun updateAttempt(
         id: Long,
-        dto: SpecialInterceptionDTO,
+        model: SpecialInterception,
     ): SpecialInterception
 
     fun deleteAttempt(id: Long): Boolean

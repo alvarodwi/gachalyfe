@@ -1,0 +1,65 @@
+package me.gachalyfe.rapi.service.equipment
+
+import me.gachalyfe.rapi.data.entity.ManufacturerEquipmentEntity
+import me.gachalyfe.rapi.data.mapper.EquipmentMapper
+import me.gachalyfe.rapi.data.repository.ManufacturerEquipmentRepository
+import me.gachalyfe.rapi.domain.model.EquipmentSourceType
+import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
+import me.gachalyfe.rapi.domain.service.ManufacturerEquipmentService
+import me.gachalyfe.rapi.utils.exception.ResourceNotFoundException
+import org.springframework.data.repository.findByIdOrNull
+import org.springframework.stereotype.Service
+
+@Service
+class ManufacturerEquipmentServiceImpl(
+    private val repository: ManufacturerEquipmentRepository,
+    private val mapper: EquipmentMapper,
+) : ManufacturerEquipmentService {
+    override fun getEquipments(): List<ManufacturerEquipment> {
+        val data = repository.findLast10()
+        return data.map { mapper.toModel(it) }
+    }
+
+    override fun getEquipmentsBySourceIdAndSourceType(
+        sourceId: Long,
+        sourceType: EquipmentSourceType,
+    ): List<ManufacturerEquipment> =
+        repository
+            .findBySourceIdAndSourceType(
+                sourceId = sourceId,
+                sourceType = sourceType.ordinal,
+            ).map(mapper::toModel)
+
+    override fun createEquipment(model: ManufacturerEquipment): ManufacturerEquipment {
+        val newEquipment = mapper.toEntity(model)
+        val saved = repository.save(newEquipment)
+        return mapper.toModel(saved)
+    }
+
+    override fun updateEquipment(
+        id: Long,
+        model: ManufacturerEquipment,
+    ): ManufacturerEquipment {
+        val data = repository.findByIdOrNull(id) ?: throw ResourceNotFoundException("There's no such manufacturer equipments with id=$id")
+        val update =
+            ManufacturerEquipmentEntity(
+                id = data.id,
+                date = data.date,
+                manufacturer = model.manufacturer,
+                classType = model.classType,
+                slotType = model.slotType,
+                sourceId = data.sourceId,
+                sourceType = data.sourceType,
+            )
+        repository.save(update)
+        return mapper.toModel(update)
+    }
+
+    override fun deleteEquipment(id: Long): Boolean {
+        val data =
+            repository.findByIdOrNull(id)
+                ?: throw ResourceNotFoundException("There's no such manufacturer equipments with id=$id")
+        repository.deleteById(data.id)
+        return true
+    }
+}

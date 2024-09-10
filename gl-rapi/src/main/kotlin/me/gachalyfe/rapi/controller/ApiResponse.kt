@@ -1,7 +1,7 @@
-package me.gachalyfe.rapi.data.dto
+package me.gachalyfe.rapi.controller
 
-import me.gachalyfe.rapi.data.dto.ApiResponse.Error
-import me.gachalyfe.rapi.data.dto.ApiResponse.Success
+import me.gachalyfe.rapi.controller.ApiResponse.Error
+import me.gachalyfe.rapi.controller.ApiResponse.Success
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 

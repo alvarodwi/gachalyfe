@@ -1,8 +1,8 @@
-package me.gachalyfe.rapi.controller
+package me.gachalyfe.rapi.controller.endpoint.csv
 
 import jakarta.servlet.http.HttpServletResponse
-import me.gachalyfe.rapi.data.dto.ApiResponse
-import me.gachalyfe.rapi.data.dto.buildResponse
+import me.gachalyfe.rapi.controller.ApiResponse
+import me.gachalyfe.rapi.controller.buildResponse
 import me.gachalyfe.rapi.domain.service.CsvService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus

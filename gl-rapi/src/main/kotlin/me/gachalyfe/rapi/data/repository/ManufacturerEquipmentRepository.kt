@@ -9,8 +9,10 @@ interface ManufacturerEquipmentRepository : JpaRepository<ManufacturerEquipmentE
     @Query("select m from manufacturer_equipments m order by m.date desc limit 10")
     fun findLast10(): List<ManufacturerEquipmentEntity>
 
-    @Query("select m from manufacturer_equipments m where m.sourceType = :sourceType and m.sourceId = :sourceId")
-    fun findBySourceTypeAndSourceId(
+    @Query(
+        "select m from manufacturer_equipments m where m.sourceType = :sourceType and m.sourceId = :sourceId",
+    )
+    fun findBySourceIdAndSourceType(
         @Param("sourceType") sourceType: Int,
         @Param("sourceId") sourceId: Long,
     ): List<ManufacturerEquipmentEntity>

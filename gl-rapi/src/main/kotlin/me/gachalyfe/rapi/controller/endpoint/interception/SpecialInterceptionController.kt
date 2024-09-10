@@ -1,9 +1,10 @@
-package me.gachalyfe.rapi.controller
+package me.gachalyfe.rapi.controller.endpoint.interception
 
 import jakarta.validation.Valid
-import me.gachalyfe.rapi.data.dto.ApiResponse
-import me.gachalyfe.rapi.data.dto.SpecialInterceptionDTO
-import me.gachalyfe.rapi.data.dto.buildResponse
+import me.gachalyfe.rapi.controller.ApiResponse
+import me.gachalyfe.rapi.controller.buildResponse
+import me.gachalyfe.rapi.controller.dto.SpecialInterceptionDTO
+import me.gachalyfe.rapi.data.mapper.InterceptionMapper
 import me.gachalyfe.rapi.domain.model.SpecialInterception
 import me.gachalyfe.rapi.domain.service.SpecialInterceptionService
 import me.gachalyfe.rapi.utils.lazyLogger
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("api/special-interceptions")
 class SpecialInterceptionController(
     private val service: SpecialInterceptionService,
+    private val mapper: InterceptionMapper,
 ) {
     private val log by lazyLogger()
 
@@ -57,7 +59,7 @@ class SpecialInterceptionController(
             ApiResponse.Success(
                 status = HttpStatus.CREATED.value(),
                 message = "Data created successfully",
-                data = service.createAttempt(dto),
+                data = service.createAttempt(mapper.toModel(dto)),
             )
         log.info("Created new anomaly interception attempt for ${dto.date} against ${dto.bossName}")
         return response.buildResponse()
@@ -72,7 +74,7 @@ class SpecialInterceptionController(
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data updated successfully",
-                data = service.updateAttempt(id, dto),
+                data = service.updateAttempt(id, mapper.toModel(dto)),
             )
         log.info("Updated anomaly interception attempt with id $id on ${dto.date}")
         return response.buildResponse()

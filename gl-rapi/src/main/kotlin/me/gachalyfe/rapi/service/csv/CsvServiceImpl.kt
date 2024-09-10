@@ -1,7 +1,6 @@
-package me.gachalyfe.rapi.data.impl
+package me.gachalyfe.rapi.service.csv
 
 import jakarta.transaction.Transactional
-import me.gachalyfe.rapi.controller.exception.CsvHandlingException
 import me.gachalyfe.rapi.data.entity.AnomalyInterceptionEntity
 import me.gachalyfe.rapi.data.entity.ManufacturerEquipmentEntity
 import me.gachalyfe.rapi.data.entity.SpecialInterceptionEntity
@@ -10,6 +9,7 @@ import me.gachalyfe.rapi.data.repository.ManufacturerEquipmentRepository
 import me.gachalyfe.rapi.data.repository.SpecialInterceptionRepository
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.service.CsvService
+import me.gachalyfe.rapi.utils.exception.CsvHandlingException
 import me.gachalyfe.rapi.utils.lazyLogger
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -155,7 +155,7 @@ class CsvServiceImpl(
                         classType = line[3],
                         slotType = line[4],
                         sourceId = -1, //
-                        sourceType = assignSourceTypeFromString(line[1]).code,
+                        sourceType = assignSourceTypeFromString(line[1]).ordinal,
                     )
                 }.toList()
 
@@ -163,8 +163,8 @@ class CsvServiceImpl(
         // first for the anomaly drops
         val aiDrops = processAnomalyDrops(data)
         val siDrops = processSpecialInterceptionDrops(data)
-        val armsDrops = data.filter { it.sourceType == EquipmentSourceType.ARMS.code }
-        val furnaceDrops = data.filter { it.sourceType == EquipmentSourceType.FURNACE.code }
+        val armsDrops = data.filter { it.sourceType == EquipmentSourceType.ARMS.ordinal }
+        val furnaceDrops = data.filter { it.sourceType == EquipmentSourceType.FURNACE.ordinal }
         log.info("imported ${aiDrops.size} equipment from anomaly interceptions")
         log.info("imported ${siDrops.size} equipment from special interceptions")
         log.info("imported ${armsDrops.size} equipment from opening manufacturer arms")
@@ -190,7 +190,7 @@ class CsvServiceImpl(
         var tempDate = ""
         var sourceIds = emptyList<Long>()
         return data
-            .filter { it.sourceType == EquipmentSourceType.AI_DROPS.code }
+            .filter { it.sourceType == EquipmentSourceType.AI_DROPS.ordinal }
             .map { equipment ->
                 if (equipment.date == tempDate) {
                     dropsFromSameDateCount += 1
@@ -207,7 +207,9 @@ class CsvServiceImpl(
                     }
                 } else {
                     if (sourceIds.size <= dropsFromSameDateCount) {
-                        throw CsvHandlingException("There are invalid entry on the equipment with date=$tempDate")
+                        throw CsvHandlingException(
+                            "There are invalid entry on the equipment with date=$tempDate",
+                        )
                     }
                 }
                 equipment.copy(sourceId = sourceIds[dropsFromSameDateCount])
@@ -220,7 +222,7 @@ class CsvServiceImpl(
         var dropOnThatDate = 0
         var sourceId = 0L
         return data
-            .filter { it.sourceType == EquipmentSourceType.SI_DROPS.code }
+            .filter { it.sourceType == EquipmentSourceType.SI_DROPS.ordinal }
             .map { equipment ->
                 if (equipment.date == tempDate) {
                     dropsFromSameDateCount += 1

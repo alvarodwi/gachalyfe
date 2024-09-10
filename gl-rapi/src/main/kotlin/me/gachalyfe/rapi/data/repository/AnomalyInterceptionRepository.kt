@@ -9,7 +9,9 @@ interface AnomalyInterceptionRepository : JpaRepository<AnomalyInterceptionEntit
     @Query("select a from anomaly_interceptions a order by a.date desc limit 10")
     fun findLast10(): List<AnomalyInterceptionEntity>
 
-    @Query("select a.id from anomaly_interceptions a where date = :date and dropped = true and dropType != 'Modules'")
+    @Query(
+        "select a.id from anomaly_interceptions a where date = :date and dropped = true and dropType != 'Modules'",
+    )
     fun findIdsByDateAndEquipmentDrops(
         @Param("date") date: String,
     ): List<Long>

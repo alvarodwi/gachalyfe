@@ -1,7 +1,7 @@
 package me.gachalyfe.rapi.domain.model
 
 data class ManufacturerEquipment(
-    val id: Long,
+    val id: Long = 0,
     val date: String,
     val manufacturer: String,
     val classType: String,

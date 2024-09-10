@@ -1,4 +1,4 @@
-package me.gachalyfe.rapi.controller.exception
+package me.gachalyfe.rapi.utils.exception
 
 class ResourceNotFoundException(
     message: String,
