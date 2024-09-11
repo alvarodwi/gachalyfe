@@ -1,7 +1,7 @@
 package me.gachalyfe.rapi.domain.model
 
 data class SpecialInterception(
-    val id: Long,
+    val id: Long = 0,
     val date: String,
     val bossName: String,
     val t9Equipment: Int,
