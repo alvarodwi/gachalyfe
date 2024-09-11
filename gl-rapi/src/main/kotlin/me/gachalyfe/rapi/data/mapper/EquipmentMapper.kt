@@ -4,6 +4,9 @@ import me.gachalyfe.rapi.controller.dto.ManufacturerEquipmentDTO
 import me.gachalyfe.rapi.data.entity.ManufacturerEquipmentEntity
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
+import me.gachalyfe.rapi.service.csv.schema.ManufacturerEquipmentCsvSchema
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 fun ManufacturerEquipmentEntity.toModel() =
     ManufacturerEquipment(
@@ -24,7 +27,7 @@ fun ManufacturerEquipmentDTO.toModel() =
         classType = classType,
         slotType = slotType,
         sourceId = sourceId ?: 0,
-        sourceType = EquipmentSourceType.entries[this.sourceType ?: 0],
+        sourceType = EquipmentSourceType.entries[sourceType ?: 0],
     )
 
 fun ManufacturerEquipment.toEntity() =
@@ -35,5 +38,25 @@ fun ManufacturerEquipment.toEntity() =
         classType = classType,
         slotType = slotType,
         sourceId = sourceId,
-        sourceType = sourceType.ordinal
+        sourceType = sourceType.ordinal,
+    )
+
+fun ManufacturerEquipment.toCsvSchema() =
+    ManufacturerEquipmentCsvSchema(
+        date = LocalDate.parse(date),
+        sourceType = sourceType.name,
+        manufacturer = manufacturer,
+        classType = classType,
+        slotType = slotType,
+    )
+
+fun ManufacturerEquipmentCsvSchema.toModel() =
+    ManufacturerEquipment(
+        id = 0,
+        date = date.format(DateTimeFormatter.ISO_DATE),
+        manufacturer = manufacturer,
+        classType = classType,
+        slotType = slotType,
+        sourceId = 0,
+        sourceType = EquipmentSourceType.valueOf(sourceType),
     )

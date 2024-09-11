@@ -5,8 +5,8 @@ import me.gachalyfe.rapi.data.repository.SpecialInterceptionRepository
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
 import me.gachalyfe.rapi.domain.model.SpecialInterception
-import me.gachalyfe.rapi.domain.service.ManufacturerEquipmentService
-import me.gachalyfe.rapi.domain.service.SpecialInterceptionService
+import me.gachalyfe.rapi.domain.service.equipment.ManufacturerEquipmentService
+import me.gachalyfe.rapi.domain.service.interception.SpecialInterceptionService
 import me.gachalyfe.rapi.utils.exception.ResourceNotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -18,7 +18,7 @@ class SpecialInterceptionServiceImpl(
     private val repository: SpecialInterceptionRepository,
     private val equipmentService: ManufacturerEquipmentService,
 ) : SpecialInterceptionService {
-    override fun createAttempt(model: SpecialInterception): SpecialInterception {
+    override fun save(model: SpecialInterception): SpecialInterception {
         val newData = model.toEntity()
         val savedData = repository.save(newData)
 
@@ -34,7 +34,7 @@ class SpecialInterceptionServiceImpl(
                         sourceId = savedData.id,
                         sourceType = EquipmentSourceType.SI_DROPS,
                     )
-                val newEquipment = equipmentService.createEquipment(equipment)
+                val newEquipment = equipmentService.save(equipment)
                 createdEquipments.add(newEquipment)
                 return savedData.toModel().copy(equipments = createdEquipments)
             }
@@ -43,19 +43,32 @@ class SpecialInterceptionServiceImpl(
         return savedData.toModel()
     }
 
-    override fun getAttempts(): List<SpecialInterception> {
-        val data = repository.findLast10().map(SpecialInterceptionEntity::toModel)
-        return data
+    override fun saveAll(data: List<SpecialInterception>): Int {
+        val saved = data.map { save(it) }
+        return saved.size
     }
 
-    override fun getAttempt(id: Long): SpecialInterception {
+    override fun findAll(): List<SpecialInterception> {
+        val data = repository.findAllByOrderByDateAsc()
+        return data.map { it.toModel() }
+    }
+
+    override fun findAllByLatest(): List<SpecialInterception> {
+        val data = repository.findLast10()
+        return data.map { it.toModel() }
+    }
+
+    override fun findByDateAndEquipmentDropped(date: String): SpecialInterception? =
+        repository.findByDateAndEquipmentDropped(date)?.toModel()
+
+    override fun findById(id: Long): SpecialInterception {
         val data =
             repository.findByIdOrNull(id)
                 ?: throw ResourceNotFoundException("There's no such anomaly interception attempt with id=$id")
 
         if (data.t9ManufacturerEquipment > 0) {
             val equipments =
-                equipmentService.getEquipmentsBySourceIdAndSourceType(
+                equipmentService.findAllBySourceIdAndSourceType(
                     sourceId = id,
                     sourceType = EquipmentSourceType.SI_DROPS,
                 )
@@ -94,13 +107,13 @@ class SpecialInterceptionServiceImpl(
 
         val equipmentIds =
             equipmentService
-                .getEquipmentsBySourceIdAndSourceType(
+                .findAllBySourceIdAndSourceType(
                     data.id,
                     EquipmentSourceType.SI_DROPS,
                 ).map(
                     ManufacturerEquipment::id,
                 )
-        equipmentIds.forEach(equipmentService::deleteEquipment)
+        equipmentIds.forEach(equipmentService::delete)
 
         repository.deleteById(data.id)
         return true

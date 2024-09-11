@@ -4,8 +4,9 @@ import jakarta.validation.Valid
 import me.gachalyfe.rapi.controller.ApiResponse
 import me.gachalyfe.rapi.controller.buildResponse
 import me.gachalyfe.rapi.controller.dto.AnomalyInterceptionDTO
+import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.domain.model.AnomalyInterception
-import me.gachalyfe.rapi.domain.service.AnomalyInterceptionService
+import me.gachalyfe.rapi.domain.service.interception.AnomalyInterceptionService
 import me.gachalyfe.rapi.utils.lazyLogger
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import toModel
 
 @RestController
 @RequestMapping("api/anomaly-interceptions")
@@ -32,7 +32,7 @@ class AnomalyInterceptionController(
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = service.getAttempts(),
+                data = service.findAll(),
             )
         return response.buildResponse()
     }
@@ -45,7 +45,7 @@ class AnomalyInterceptionController(
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = service.getAttempt(id),
+                data = service.findById(id),
             )
         return response.buildResponse()
     }
@@ -58,7 +58,7 @@ class AnomalyInterceptionController(
             ApiResponse.Success(
                 status = HttpStatus.CREATED.value(),
                 message = "Data created successfully",
-                data = service.createAttempt(dto.toModel()),
+                data = service.save(dto.toModel()),
             )
         log.info("Created new anomaly interception attempt for ${dto.date} against ${dto.bossName}")
         return response.buildResponse()
@@ -73,7 +73,7 @@ class AnomalyInterceptionController(
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data updated successfully",
-                data = service.updateAttempt(id, dto.toModel()),
+                data = service.update(id, dto.toModel()),
             )
         log.info("Updated anomaly interception attempt with id $id on ${dto.date}")
         return response.buildResponse()
@@ -87,7 +87,7 @@ class AnomalyInterceptionController(
             ApiResponse.Success(
                 status = HttpStatus.ACCEPTED.value(),
                 message = "Data deleted successfully",
-                data = service.deleteAttempt(id),
+                data = service.update(id),
             )
         log.info("Deleted anomaly interception attempt with id $id")
         return response.buildResponse()

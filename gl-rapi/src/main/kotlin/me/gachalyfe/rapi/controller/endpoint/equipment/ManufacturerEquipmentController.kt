@@ -6,7 +6,7 @@ import me.gachalyfe.rapi.controller.buildResponse
 import me.gachalyfe.rapi.controller.dto.ManufacturerEquipmentDTO
 import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
-import me.gachalyfe.rapi.domain.service.ManufacturerEquipmentService
+import me.gachalyfe.rapi.domain.service.equipment.ManufacturerEquipmentService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -28,7 +28,7 @@ class ManufacturerEquipmentController(
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = service.getEquipments(),
+                data = service.findAll(),
             )
         return response.buildResponse()
     }
@@ -42,7 +42,7 @@ class ManufacturerEquipmentController(
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data updated successfully",
-                data = service.updateEquipment(id, dto.toModel()),
+                data = service.update(id, dto.toModel()),
             )
         return response.buildResponse()
     }
@@ -55,7 +55,7 @@ class ManufacturerEquipmentController(
             ApiResponse.Success(
                 status = HttpStatus.ACCEPTED.value(),
                 message = "Data deleted successfully",
-                data = service.deleteEquipment(id),
+                data = service.delete(id),
             )
         return response.buildResponse()
     }

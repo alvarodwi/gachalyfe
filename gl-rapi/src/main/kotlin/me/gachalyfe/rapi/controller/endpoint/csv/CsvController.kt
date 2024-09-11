@@ -3,7 +3,7 @@ package me.gachalyfe.rapi.controller.endpoint.csv
 import jakarta.servlet.http.HttpServletResponse
 import me.gachalyfe.rapi.controller.ApiResponse
 import me.gachalyfe.rapi.controller.buildResponse
-import me.gachalyfe.rapi.domain.service.CsvService
+import me.gachalyfe.rapi.domain.service.csv.CsvService
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -25,7 +25,7 @@ class CsvController(
     fun importCsv(
         @RequestPart("file") file: MultipartFile,
         @RequestParam("target") target: String,
-    ): ResponseEntity<ApiResponse<Boolean>> {
+    ): ResponseEntity<ApiResponse<String>> {
         if (file.isEmpty) {
             return ApiResponse
                 .Error(
@@ -38,7 +38,7 @@ class CsvController(
             .Success(
                 status = HttpStatus.OK.value(),
                 message = "CSV imported successfully",
-                data = service.importFile(file, target),
+                data = service.importCsv(file, target),
             ).buildResponse()
     }
 
@@ -52,5 +52,5 @@ class CsvController(
             .ok()
             .contentType(MediaType("text", "csv"))
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=export-$target.csv")
-            .body(service.exportFile(target))
+            .body(service.exportCsv(target))
 }

@@ -6,7 +6,7 @@ import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.data.repository.ManufacturerEquipmentRepository
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
-import me.gachalyfe.rapi.domain.service.ManufacturerEquipmentService
+import me.gachalyfe.rapi.domain.service.equipment.ManufacturerEquipmentService
 import me.gachalyfe.rapi.utils.exception.ResourceNotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -15,12 +15,17 @@ import org.springframework.stereotype.Service
 class ManufacturerEquipmentServiceImpl(
     private val repository: ManufacturerEquipmentRepository,
 ) : ManufacturerEquipmentService {
-    override fun getEquipments(): List<ManufacturerEquipment> {
+    override fun findAll(): List<ManufacturerEquipment> {
+        val data = repository.findAllByOrderByDateAsc()
+        return data.map { it.toModel() }
+    }
+
+    override fun findAllByLatest(): List<ManufacturerEquipment> {
         val data = repository.findLast10()
         return data.map { it.toModel() }
     }
 
-    override fun getEquipmentsBySourceIdAndSourceType(
+    override fun findAllBySourceIdAndSourceType(
         sourceId: Long,
         sourceType: EquipmentSourceType,
     ): List<ManufacturerEquipment> =
@@ -30,13 +35,18 @@ class ManufacturerEquipmentServiceImpl(
                 sourceType = sourceType.ordinal,
             ).map { it.toModel() }
 
-    override fun createEquipment(model: ManufacturerEquipment): ManufacturerEquipment {
+    override fun save(model: ManufacturerEquipment): ManufacturerEquipment {
         val newEquipment = model.toEntity()
         val saved = repository.save(newEquipment)
         return saved.toModel()
     }
 
-    override fun updateEquipment(
+    override fun saveAll(data: List<ManufacturerEquipment>): Int {
+        val saved = data.map { save(it) }
+        return saved.size
+    }
+
+    override fun update(
         id: Long,
         model: ManufacturerEquipment,
     ): ManufacturerEquipment {
@@ -55,7 +65,7 @@ class ManufacturerEquipmentServiceImpl(
         return update.toModel()
     }
 
-    override fun deleteEquipment(id: Long): Boolean {
+    override fun delete(id: Long): Boolean {
         val data =
             repository.findByIdOrNull(id)
                 ?: throw ResourceNotFoundException("There's no such manufacturer equipments with id=$id")

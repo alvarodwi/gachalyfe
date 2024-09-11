@@ -5,7 +5,7 @@ import me.gachalyfe.rapi.controller.ApiResponse
 import me.gachalyfe.rapi.controller.buildResponse
 import me.gachalyfe.rapi.controller.dto.SpecialInterceptionDTO
 import me.gachalyfe.rapi.domain.model.SpecialInterception
-import me.gachalyfe.rapi.domain.service.SpecialInterceptionService
+import me.gachalyfe.rapi.domain.service.interception.SpecialInterceptionService
 import me.gachalyfe.rapi.utils.lazyLogger
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -27,12 +27,23 @@ class SpecialInterceptionController(
     private val log by lazyLogger()
 
     @GetMapping
+    fun getAll(): ResponseEntity<ApiResponse<List<SpecialInterception>>> {
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.OK.value(),
+                message = "Data retrieved successfully",
+                data = service.findAll(),
+            )
+        return response.buildResponse()
+    }
+
+    @GetMapping("latest")
     fun getLast10(): ResponseEntity<ApiResponse<List<SpecialInterception>>> {
         val response =
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = service.getAttempts(),
+                data = service.findAll(),
             )
         return response.buildResponse()
     }
@@ -45,7 +56,7 @@ class SpecialInterceptionController(
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = service.getAttempt(id),
+                data = service.findById(id),
             )
         return response.buildResponse()
     }
@@ -58,7 +69,7 @@ class SpecialInterceptionController(
             ApiResponse.Success(
                 status = HttpStatus.CREATED.value(),
                 message = "Data created successfully",
-                data = service.createAttempt(dto.toModel()),
+                data = service.save(dto.toModel()),
             )
         log.info("Created new anomaly interception attempt for ${dto.date} against ${dto.bossName}")
         return response.buildResponse()

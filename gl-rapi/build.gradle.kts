@@ -38,6 +38,8 @@ dependencies {
     implementation("org.hibernate.orm:hibernate-community-dialects")
     implementation("org.flywaydb:flyway-core")
     runtimeOnly("org.xerial:sqlite-jdbc")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     // test
     testImplementation("org.springframework.boot:spring-boot-starter-test")

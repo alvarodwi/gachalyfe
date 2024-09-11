@@ -1,12 +1,12 @@
-package me.gachalyfe.rapi.domain.service
+package me.gachalyfe.rapi.domain.service.csv
 
 import org.springframework.web.multipart.MultipartFile
 
 interface CsvService {
-    fun importFile(
+    fun importCsv(
         file: MultipartFile,
         target: String,
-    ): Boolean
+    ): String
 
-    fun exportFile(target: String): ByteArray
+    fun exportCsv(target: String): ByteArray
 }
