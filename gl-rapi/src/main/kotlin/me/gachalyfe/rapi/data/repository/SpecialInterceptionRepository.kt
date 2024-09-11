@@ -7,7 +7,9 @@ import org.springframework.data.repository.query.Param
 
 interface SpecialInterceptionRepository : JpaRepository<SpecialInterceptionEntity, Long> {
     @Query("select s from special_interceptions s order by s.date desc limit 10")
-    fun findLast10(): List<SpecialInterceptionEntity>
+    fun findLatest(
+        @Param("limit") limit: Int = 10,
+    ): List<SpecialInterceptionEntity>
 
     @Query(
         "select s from special_interceptions s where date = :date and t9ManufacturerEquipment > 0",

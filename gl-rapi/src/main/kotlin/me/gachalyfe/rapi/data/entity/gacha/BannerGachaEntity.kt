@@ -23,6 +23,6 @@ data class BannerGachaEntity(
     val totalAttempt: Int,
     @Column(name = "total_ssr")
     val totalSSR: Int,
-    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @OneToMany(cascade = [CascadeType.MERGE], fetch = FetchType.LAZY)
     val nikkePulled: List<NikkeEntity> = emptyList(),
 )

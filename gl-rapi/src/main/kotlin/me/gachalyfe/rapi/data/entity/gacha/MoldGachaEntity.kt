@@ -16,10 +16,11 @@ data class MoldGachaEntity(
     @Column(name = "id", columnDefinition = "INTEGER")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
+    val date: String,
     val type: Int,
     val amount: Int,
     @Column(name = "total_ssr")
     val totalSSR: Int,
-    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @OneToMany(cascade = [CascadeType.MERGE], fetch = FetchType.LAZY)
     val nikkePulled: List<NikkeEntity> = emptyList(),
 )

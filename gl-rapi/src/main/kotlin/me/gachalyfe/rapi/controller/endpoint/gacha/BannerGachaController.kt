@@ -1,11 +1,12 @@
-package me.gachalyfe.rapi.controller.endpoint.interception
+package me.gachalyfe.rapi.controller.endpoint.gacha
 
 import jakarta.validation.Valid
 import me.gachalyfe.rapi.controller.ApiResponse
 import me.gachalyfe.rapi.controller.buildResponse
-import me.gachalyfe.rapi.controller.dto.SpecialInterceptionDTO
-import me.gachalyfe.rapi.domain.model.SpecialInterception
-import me.gachalyfe.rapi.domain.service.interception.SpecialInterceptionService
+import me.gachalyfe.rapi.controller.dto.gacha.BannerGachaDTO
+import me.gachalyfe.rapi.data.mapper.toModel
+import me.gachalyfe.rapi.domain.model.gacha.BannerGacha
+import me.gachalyfe.rapi.domain.service.gacha.BannerGachaService
 import me.gachalyfe.rapi.utils.lazyLogger
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,34 +17,25 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import toModel
 
 @RestController
-@RequestMapping("api/special-interceptions")
-class SpecialInterceptionController(
-    private val service: SpecialInterceptionService,
+@RequestMapping("api/gacha/banner")
+class BannerGachaController(
+    private val service: BannerGachaService,
 ) {
     private val log by lazyLogger()
 
     @GetMapping
-    fun getAll(): ResponseEntity<ApiResponse<List<SpecialInterception>>> {
+    fun getByBannerName(
+        @RequestParam("bannerName") bannerName: String,
+    ): ResponseEntity<ApiResponse<List<BannerGacha>>> {
         val response =
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = service.findAllByLatest(),
-            )
-        return response.buildResponse()
-    }
-
-    @GetMapping("latest")
-    fun getLast10(): ResponseEntity<ApiResponse<List<SpecialInterception>>> {
-        val response =
-            ApiResponse.Success(
-                status = HttpStatus.OK.value(),
-                message = "Data retrieved successfully",
-                data = service.findAll(),
+                data = service.findAllByBannerName(bannerName),
             )
         return response.buildResponse()
     }
@@ -51,7 +43,7 @@ class SpecialInterceptionController(
     @GetMapping("{id}")
     fun getById(
         @PathVariable("id") id: Long,
-    ): ResponseEntity<ApiResponse<SpecialInterception>> {
+    ): ResponseEntity<ApiResponse<BannerGacha>> {
         val response =
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
@@ -63,30 +55,30 @@ class SpecialInterceptionController(
 
     @PostMapping
     fun create(
-        @Valid @RequestBody dto: SpecialInterceptionDTO,
-    ): ResponseEntity<ApiResponse<SpecialInterception>> {
+        @Valid @RequestBody dto: BannerGachaDTO,
+    ): ResponseEntity<ApiResponse<BannerGacha>> {
         val response =
             ApiResponse.Success(
                 status = HttpStatus.CREATED.value(),
                 message = "Data created successfully",
                 data = service.save(dto.toModel()),
             )
-        log.info("Created new anomaly interception attempt on ${dto.date} against ${dto.bossName}")
+        log.info("Created new banner gacha pull on ${dto.date} for ${dto.pickUpName} banner")
         return response.buildResponse()
     }
 
     @PutMapping("{id}")
     fun update(
         @PathVariable("id") id: Long,
-        @Valid @RequestBody dto: SpecialInterceptionDTO,
-    ): ResponseEntity<ApiResponse<SpecialInterception>> {
+        @Valid @RequestBody dto: BannerGachaDTO,
+    ): ResponseEntity<ApiResponse<BannerGacha>> {
         val response =
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data updated successfully",
                 data = service.update(id, dto.toModel()),
             )
-        log.info("Updated anomaly interception attempt with id $id on ${dto.date}")
+        log.info("Updated banner gacha pull with id $id on ${dto.date}")
         return response.buildResponse()
     }
 
@@ -100,7 +92,7 @@ class SpecialInterceptionController(
                 message = "Data deleted successfully",
                 data = service.delete(id),
             )
-        log.info("Deleted anomaly interception attempt with id $id")
+        log.info("Deleted banner gacha pull with id $id")
         return response.buildResponse()
     }
 }

@@ -23,6 +23,7 @@ create table banner_gacha(
 -- create mold gacha table
 create table mold_gacha(
     id integer primary key autoincrement not null,
+    date varchar(24) not null,
     type integer(1) not null,
     amount integer(2) not null,
     total_ssr integer(2) not null
@@ -30,10 +31,12 @@ create table mold_gacha(
 
 -- create relations table
 create table banner_gacha_nikke_pulled(
+  id integer primary key autoincrement not null,
   banner_gacha_id integer not null,
   nikke_pulled_id integer not null
 );
 create table mold_gacha_nikke_pulled(
+  id integer primary key autoincrement not null,
   mold_gacha_id integer not null,
   nikke_pulled_id integer not null
 );

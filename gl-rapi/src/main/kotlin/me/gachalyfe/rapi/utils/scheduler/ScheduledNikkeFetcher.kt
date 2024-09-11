@@ -18,10 +18,13 @@ class ScheduledNikkeFetcher(
     @Scheduled(fixedDelayString = "PT24H")
     fun fetchNikke() {
         log.info("Fetching nikke from $nikkeClient")
-        val data = nikkeClient.getNikke().map { it.toModel() }
-        data.filter { it.id < 2000 }.forEach { nikke ->
-            repository.save(nikke.toEntity())
-        }
+        val data = nikkeClient.getNikke()
+        data
+            .filter { it.id < 2000 }
+            .filter { it.rarity == "SSR" }
+            .map { it.toModel() }
+            .forEach { nikke ->
+                repository.save(nikke.toEntity())
+            }
     }
-
 }

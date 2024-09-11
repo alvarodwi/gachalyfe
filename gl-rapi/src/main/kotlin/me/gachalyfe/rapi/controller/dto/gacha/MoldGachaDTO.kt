@@ -8,6 +8,8 @@ import me.gachalyfe.rapi.controller.dto.NikkeDTO
 data class MoldGachaDTO(
     val id: Long?,
     @field:NotBlank
+    val date: String,
+    @field:Min(1)
     val type: String,
     @field:Min(0)
     val amount: Int,

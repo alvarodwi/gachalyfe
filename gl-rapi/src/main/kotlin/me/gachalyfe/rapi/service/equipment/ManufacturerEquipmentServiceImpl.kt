@@ -21,7 +21,7 @@ class ManufacturerEquipmentServiceImpl(
     }
 
     override fun findAllByLatest(): List<ManufacturerEquipment> {
-        val data = repository.findLast10()
+        val data = repository.findLatest()
         return data.map { it.toModel() }
     }
 

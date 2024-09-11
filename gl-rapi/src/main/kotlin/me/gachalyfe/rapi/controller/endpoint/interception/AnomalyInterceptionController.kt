@@ -32,7 +32,7 @@ class AnomalyInterceptionController(
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = service.findAll(),
+                data = service.findAllByLatest(),
             )
         return response.buildResponse()
     }
@@ -60,7 +60,7 @@ class AnomalyInterceptionController(
                 message = "Data created successfully",
                 data = service.save(dto.toModel()),
             )
-        log.info("Created new anomaly interception attempt for ${dto.date} against ${dto.bossName}")
+        log.info("Created new anomaly interception attempt on ${dto.date} against ${dto.bossName}")
         return response.buildResponse()
     }
 
@@ -73,7 +73,7 @@ class AnomalyInterceptionController(
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data updated successfully",
-                data = service.update(id, dto.toModel()),
+                data = service.delete(id, dto.toModel()),
             )
         log.info("Updated anomaly interception attempt with id $id on ${dto.date}")
         return response.buildResponse()
@@ -87,7 +87,7 @@ class AnomalyInterceptionController(
             ApiResponse.Success(
                 status = HttpStatus.ACCEPTED.value(),
                 message = "Data deleted successfully",
-                data = service.update(id),
+                data = service.delete(id),
             )
         log.info("Deleted anomaly interception attempt with id $id")
         return response.buildResponse()

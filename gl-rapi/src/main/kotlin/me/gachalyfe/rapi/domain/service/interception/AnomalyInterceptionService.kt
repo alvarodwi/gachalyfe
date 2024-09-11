@@ -15,10 +15,10 @@ interface AnomalyInterceptionService {
 
     fun saveAll(data: List<AnomalyInterception>): Int
 
-    fun update(
+    fun delete(
         id: Long,
         model: AnomalyInterception,
     ): AnomalyInterception
 
-    fun update(id: Long): Boolean
+    fun delete(id: Long): Boolean
 }

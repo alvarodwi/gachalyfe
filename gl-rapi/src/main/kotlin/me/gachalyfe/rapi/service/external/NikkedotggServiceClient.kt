@@ -14,7 +14,7 @@ class NikkedotggServiceClient(
     fun getNikke(): List<NikkeDTO> {
         val restTemplate = RestTemplate()
         val responseType = object : ParameterizedTypeReference<List<NikkeDTO>>() {}
-        val response = restTemplate.exchange<List<NikkeDTO>>("${clientUrl}/characters", HttpMethod.GET, null, responseType)
+        val response = restTemplate.exchange<List<NikkeDTO>>("$clientUrl/characters", HttpMethod.GET, null, responseType)
 
         return response.body ?: emptyList()
     }

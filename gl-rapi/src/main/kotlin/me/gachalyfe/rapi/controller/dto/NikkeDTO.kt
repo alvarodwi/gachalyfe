@@ -9,10 +9,11 @@ data class NikkeDTO(
     val id: Long,
     @field:NotBlank
     val name: String,
-    val manufacturer: String,
+    val manufacturer: String?,
     @JsonProperty("class")
-    val classType: String,
-    val burst: String,
-    val weapon: String,
-    val element: String,
+    val classType: String?,
+    val burst: String?,
+    val weapon: String?,
+    val rarity: String?,
+    val element: String?,
 )

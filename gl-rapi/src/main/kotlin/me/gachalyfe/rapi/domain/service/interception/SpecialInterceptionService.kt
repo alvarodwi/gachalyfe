@@ -15,10 +15,10 @@ interface SpecialInterceptionService {
 
     fun saveAll(data: List<SpecialInterception>): Int
 
-    fun updateAttempt(
+    fun update(
         id: Long,
         model: SpecialInterception,
     ): SpecialInterception
 
-    fun deleteAttempt(id: Long): Boolean
+    fun delete(id: Long): Boolean
 }

@@ -50,7 +50,7 @@ class AnomalyInterceptionServiceImpl(
     }
 
     override fun findAllByLatest(): List<AnomalyInterception> {
-        val data = repository.findLast10()
+        val data = repository.findLatest()
         return data.map { it.toModel() }
     }
 
@@ -75,7 +75,7 @@ class AnomalyInterceptionServiceImpl(
         return data.toModel()
     }
 
-    override fun update(
+    override fun delete(
         id: Long,
         model: AnomalyInterception,
     ): AnomalyInterception {
@@ -90,7 +90,7 @@ class AnomalyInterceptionServiceImpl(
         return update.toModel()
     }
 
-    override fun update(id: Long): Boolean {
+    override fun delete(id: Long): Boolean {
         val data =
             repository.findByIdOrNull(id)
                 ?: throw ResourceNotFoundException("There's no such anomaly interception attempt with id=$id")
