@@ -2,16 +2,13 @@ package me.gachalyfe.rapi.data.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 
 @Entity(name = "nikke")
 data class NikkeEntity(
     @Id
     @Column(name = "id", columnDefinition = "INTEGER")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0,
+    val id: Long,
     @Column(unique = true)
     val name: String,
     val manufacturer: String,

@@ -1,6 +1,6 @@
 -- create nikke table
 create table nikke(
-    id integer primary key autoincrement not null,
+    id integer primary key not null,
     name varchar(50) unique not null,
     manufacturer varchar(8) not null,
     class_type varchar(9) not null,

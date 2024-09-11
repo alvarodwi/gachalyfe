@@ -32,7 +32,7 @@ fun NikkeDTO.toModel() =
         name = name,
         manufacturer = manufacturer,
         classType = classType,
-        burst = burst,
+        burst = if (burst == "p") "1,2,3" else burst,
         weapon = weapon,
         element = element,
     )

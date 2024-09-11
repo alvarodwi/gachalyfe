@@ -16,5 +16,8 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 5MB
+service:
+  nikkedotgg:
+    host: https://dotgg.gg/nikke/api
 server:
   port: 8000
