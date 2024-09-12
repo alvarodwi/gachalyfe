@@ -15,8 +15,7 @@ export default defineConfig({
     presetWebFonts({
       provider: 'google',
       fonts: {
-        sans: 'Noto Sans',
-        serif: 'Noto Serif',
+        serif: 'Noto Serif:300,400,500,600,700',
       },
     }),
     presetForms(),

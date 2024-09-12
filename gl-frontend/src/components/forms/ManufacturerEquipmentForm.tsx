@@ -8,11 +8,9 @@ interface Props {
   className?: string
 }
 
-export default function ManufacturerEquipmentForm({
-  onChange,
-  dropType,
-  className,
-}: Props) {
+export default function ManufacturerEquipmentForm(props: Props) {
+  const { dropType, className, onChange } = props
+
   const [data, setData] = useState<ManufacturerEquipment>({
     manufacturer: 'Elysion',
     classType: 'Attacker',
@@ -36,7 +34,7 @@ export default function ManufacturerEquipmentForm({
           onChange={(event) => {
             setData({ ...data, manufacturer: event.target.value.toString() })
           }}
-          className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+          className="mt-1 w-full border-black text-sm"
         >
           <option value="Elysion">Elysion</option>
           <option value="Missilis">Missilis</option>
@@ -53,7 +51,7 @@ export default function ManufacturerEquipmentForm({
           onChange={(event) => {
             setData({ ...data, classType: event.target.value.toString() })
           }}
-          className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+          className="mt-1 w-full border-black text-sm"
         >
           <option value="Attacker">Attacker</option>
           <option value="Defender">Defender</option>
@@ -65,7 +63,7 @@ export default function ManufacturerEquipmentForm({
           Slot
         </label>
         <select
-          className="mt-1 w-full rounded-md border-gray-200 shadow-sm sm:text-sm"
+          className="mt-1 w-full border-black text-sm"
           disabled={dropType != undefined}
           onChange={(event) => {
             setData({ ...data, slotType: event.target.value })

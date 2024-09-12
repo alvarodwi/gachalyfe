@@ -1,4 +1,4 @@
 export interface ImporterFile {
-  file: File
+  file: File | undefined
   target: string
 }

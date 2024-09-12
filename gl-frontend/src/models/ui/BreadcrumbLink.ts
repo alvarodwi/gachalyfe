@@ -1,4 +1,4 @@
 export interface BreadcrumbLink {
-  title: string
+  name: string
   to?: string
 }
