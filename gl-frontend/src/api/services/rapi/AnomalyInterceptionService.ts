@@ -3,10 +3,10 @@ import { ApiResponse } from '@api/types'
 import { AnomalyInterception } from '@models/domain/AnomalyInterception'
 
 export class AnomalyInterceptionService extends HttpFactory {
-  async getLast10(): Promise<ApiResponse<AnomalyInterception[]>> {
+  async getRecent(): Promise<ApiResponse<AnomalyInterception[]>> {
     return await this.call({
       method: 'get',
-      url: '/anomaly-interceptions',
+      url: '/anomaly-interceptions/latest',
     })
   }
 

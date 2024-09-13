@@ -1,0 +1,23 @@
+spring:
+  config:
+    additional-location: optional:file:/app/config/application.yml
+  application:
+    name: gachalyfe
+  datasource:
+    url: jdbc:sqlite:file:rapi.sqlite
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.community.dialect.SQLiteDialect
+        format_sql: true
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+service:
+  nikkedotgg:
+    host: https://dotgg.gg/nikke/api
+server:
+  port: 8000

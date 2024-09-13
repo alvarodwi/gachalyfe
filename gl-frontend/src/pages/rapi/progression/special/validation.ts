@@ -1,4 +1,4 @@
-import { manufacturerEquipmentSchema } from '@components/forms/validation'
+import { manufacturerEquipmentSchema } from '@components/input/validation'
 import { z } from 'zod'
 
 export const schema = z.object({
