@@ -32,18 +32,18 @@ class SpecialInterceptionController(
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = service.findAllByLatest(),
+                data = service.findAll(),
             )
         return response.buildResponse()
     }
 
     @GetMapping("latest")
-    fun getLast10(): ResponseEntity<ApiResponse<List<SpecialInterception>>> {
+    fun getLatest(): ResponseEntity<ApiResponse<List<SpecialInterception>>> {
         val response =
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = service.findAll(),
+                data = service.findAllByLatest(),
             )
         return response.buildResponse()
     }

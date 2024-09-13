@@ -27,7 +27,18 @@ class AnomalyInterceptionController(
     private val log by lazyLogger()
 
     @GetMapping
-    fun getLast10(): ResponseEntity<ApiResponse<List<AnomalyInterception>>> {
+    fun getAll(): ResponseEntity<ApiResponse<List<AnomalyInterception>>> {
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.OK.value(),
+                message = "Data retrieved successfully",
+                data = service.findAll(),
+            )
+        return response.buildResponse()
+    }
+
+    @GetMapping("latest")
+    fun getLatest(): ResponseEntity<ApiResponse<List<AnomalyInterception>>> {
         val response =
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),

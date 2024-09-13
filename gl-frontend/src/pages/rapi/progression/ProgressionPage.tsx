@@ -10,7 +10,6 @@ interface AccountInfo {
   interceptionRecorded: number
   equipmentsDropped: number
   modulesDropped: number
-  statsRecordDate: string
 }
 
 export default function ProgressionPage() {
@@ -21,7 +20,6 @@ export default function ProgressionPage() {
     interceptionRecorded: 0,
     equipmentsDropped: 0,
     modulesDropped: 0,
-    statsRecordDate: '2023-06-17',
   })
 
   return (
@@ -53,10 +51,6 @@ export default function ProgressionPage() {
           <tr id="account-level">
             <td>Account Level</td>
             <td>435</td>
-          </tr>
-          <tr id="stats-record-date">
-            <td>Stats recorded from</td>
-            <td>{accountInfo.statsRecordDate}</td>
           </tr>
         </table>
 

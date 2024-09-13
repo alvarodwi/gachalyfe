@@ -1,6 +1,7 @@
 package me.gachalyfe.rapi.data.mapper
 
-import me.gachalyfe.rapi.controller.dto.ManufacturerEquipmentDTO
+import me.gachalyfe.rapi.controller.dto.equipment.ManufacturerArmsDTO
+import me.gachalyfe.rapi.controller.dto.equipment.ManufacturerEquipmentDTO
 import me.gachalyfe.rapi.data.entity.ManufacturerEquipmentEntity
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
@@ -29,6 +30,18 @@ fun ManufacturerEquipmentDTO.toModel() =
         sourceId = sourceId ?: 0,
         sourceType = EquipmentSourceType.entries[sourceType ?: 0],
     )
+
+fun ManufacturerArmsDTO.toModel() = equipments.map { e ->
+    ManufacturerEquipment(
+        id = 0,
+        date = date,
+        manufacturer = e.manufacturer,
+        classType = e.classType,
+        slotType = e.slotType,
+        sourceId = 0,
+        sourceType = EquipmentSourceType.ARMS
+    )
+}
 
 fun ManufacturerEquipment.toEntity() =
     ManufacturerEquipmentEntity(

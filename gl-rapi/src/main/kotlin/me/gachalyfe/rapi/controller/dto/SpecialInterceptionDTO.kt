@@ -4,6 +4,7 @@ import jakarta.validation.Valid
 import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
+import me.gachalyfe.rapi.controller.dto.equipment.ManufacturerEquipmentDTO
 
 data class SpecialInterceptionDTO(
     val id: Long?,

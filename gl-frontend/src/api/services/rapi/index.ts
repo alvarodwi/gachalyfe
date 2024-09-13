@@ -2,10 +2,12 @@ import { $fetch, FetchOptions } from 'ofetch'
 import { AnomalyInterceptionService } from './AnomalyInterceptionService'
 import { SpecialInterceptionService } from './SpecialInterceptionService'
 import CsvService from './CsvService'
+import { EquipmentService } from './EquipmentService'
 
 interface ServiceInstance {
   anomaly: AnomalyInterceptionService
   special: SpecialInterceptionService
+  equipment: EquipmentService
   csv: CsvService
 }
 
@@ -18,6 +20,7 @@ export default function useApi() {
   const instances: ServiceInstance = {
     anomaly: new AnomalyInterceptionService(apiFetcher),
     special: new SpecialInterceptionService(apiFetcher),
+    equipment: new EquipmentService(apiFetcher),
     csv: new CsvService(apiFetcher),
   }
 

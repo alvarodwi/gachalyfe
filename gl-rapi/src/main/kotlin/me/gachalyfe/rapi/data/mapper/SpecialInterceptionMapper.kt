@@ -1,4 +1,4 @@
-import me.gachalyfe.rapi.controller.dto.ManufacturerEquipmentDTO
+import me.gachalyfe.rapi.controller.dto.equipment.ManufacturerEquipmentDTO
 import me.gachalyfe.rapi.controller.dto.SpecialInterceptionDTO
 import me.gachalyfe.rapi.data.entity.SpecialInterceptionEntity
 import me.gachalyfe.rapi.data.mapper.toModel

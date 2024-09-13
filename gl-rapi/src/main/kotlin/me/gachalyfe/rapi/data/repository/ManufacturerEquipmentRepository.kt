@@ -1,6 +1,7 @@
 package me.gachalyfe.rapi.data.repository
 
 import me.gachalyfe.rapi.data.entity.ManufacturerEquipmentEntity
+import org.springframework.data.domain.Limit
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
@@ -18,6 +19,8 @@ interface ManufacturerEquipmentRepository : JpaRepository<ManufacturerEquipmentE
         @Param("sourceType") sourceType: Int,
         @Param("sourceId") sourceId: Long,
     ): List<ManufacturerEquipmentEntity>
+
+    fun findBySourceType(sourceType: Int, limit: Limit) : List<ManufacturerEquipmentEntity>
 
     fun findAllByOrderByDateAsc(): List<ManufacturerEquipmentEntity>
 }

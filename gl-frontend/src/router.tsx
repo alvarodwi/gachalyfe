@@ -3,11 +3,11 @@ import RapiPage from '@pages/rapi/RapiPage'
 import NotFoundPage from '@pages/NotFound.tsx'
 import CsvImportPage from '@pages/rapi/csv/CsvImportPage'
 import ProgressionPage from '@pages/rapi/progression/ProgressionPage'
-import InventoryPage from '@pages/rapi/inventory/index.tsx'
+import InventoryPage from '@pages/rapi/inventory/InventoryPage'
 import AnomalyInterceptionPage from '@pages/rapi/progression/anomaly/AnomalyInterceptionPage'
 import SpecialInterceptionPage from '@pages/rapi/progression/special/SpecialInterceptionPage'
-import InventoryArmsPage from '@pages/rapi/inventory/arms/index.tsx'
-import InventoryFurnacePage from '@pages/rapi/inventory/furnace/index.tsx'
+import InventoryArmsPage from '@pages/rapi/inventory/arms/InventoryArmsPage'
+import InventoryFurnacePage from '@pages/rapi/inventory/furnace/InventoryFurnacePage'
 import Root from '@pages/Root'
 import { CsvExportPage } from '@pages/rapi/csv/CsvExportPage'
 
@@ -34,8 +34,8 @@ const appRouter = createBrowserRouter([
         element: <Outlet />,
         children: [
           { path: '', element: <InventoryPage /> },
-          { path: 'inventory/arms', element: <InventoryArmsPage /> },
-          { path: 'inventory/furnace', element: <InventoryFurnacePage /> },
+          { path: 'arms', element: <InventoryArmsPage /> },
+          { path: 'furnace', element: <InventoryFurnacePage /> },
         ],
       },
     ],

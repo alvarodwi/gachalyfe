@@ -6,7 +6,7 @@ export class SpecialInterceptionService extends HttpFactory {
   async getRecent(): Promise<ApiResponse<SpecialInterception[]>> {
     return await this.call({
       method: 'get',
-      url: '/special-interceptions',
+      url: '/special-interceptions/latest',
     })
   }
 

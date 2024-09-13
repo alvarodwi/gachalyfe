@@ -12,16 +12,10 @@ import { includes, some } from 'lodash'
 export default function CsvImportPage() {
   const api = useApi().csv
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    control,
-    formState: { errors },
-  } = useForm<ImporterFile>({
-    resolver: zodResolver(schema),
-  })
+  const { register, handleSubmit, watch, setValue, control } =
+    useForm<ImporterFile>({
+      resolver: zodResolver(schema),
+    })
 
   const [tableRows, setTableRows] = useState<string[]>([])
   const [tableValues, setTableValues] = useState<string[][]>([[]])

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
+import me.gachalyfe.rapi.controller.dto.equipment.ManufacturerEquipmentDTO
 
 data class AnomalyInterceptionDTO(
     val id: Long?,

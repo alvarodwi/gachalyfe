@@ -1,4 +1,4 @@
-package me.gachalyfe.rapi.controller.dto
+package me.gachalyfe.rapi.controller.dto.equipment
 
 import jakarta.validation.constraints.NotBlank
 

@@ -8,6 +8,7 @@ import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
 import me.gachalyfe.rapi.domain.service.equipment.ManufacturerEquipmentService
 import me.gachalyfe.rapi.utils.exception.ResourceNotFoundException
+import org.springframework.data.domain.Limit
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -23,6 +24,16 @@ class ManufacturerEquipmentServiceImpl(
     override fun findAllByLatest(): List<ManufacturerEquipment> {
         val data = repository.findLatest()
         return data.map { it.toModel() }
+    }
+
+    override fun findAllBySourceType(sourceType: EquipmentSourceType): List<ManufacturerEquipment> {
+        val data = repository.findBySourceType(sourceType.ordinal, Limit.unlimited())
+        return data.map { it.toModel() }
+    }
+
+    override fun findRecentBySourceType(sourceType: EquipmentSourceType, limit: Int): List<ManufacturerEquipment> {
+        val data = repository.findBySourceType(sourceType.ordinal, Limit.of(limit))
+        return data.map{ it.toModel() }
     }
 
     override fun findAllBySourceIdAndSourceType(
@@ -41,9 +52,9 @@ class ManufacturerEquipmentServiceImpl(
         return saved.toModel()
     }
 
-    override fun saveAll(data: List<ManufacturerEquipment>): Int {
+    override fun saveAll(data: List<ManufacturerEquipment>): List<ManufacturerEquipment> {
         val saved = data.map { save(it) }
-        return saved.size
+        return saved
     }
 
     override fun update(
