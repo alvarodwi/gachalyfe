@@ -27,6 +27,18 @@ class BannerGachaController(
 ) {
     private val log by lazyLogger()
 
+    @GetMapping("latest")
+    fun getRecents(): ResponseEntity<ApiResponse<List<BannerGacha>>> {
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.OK.value(),
+                message = "Data retrieved successfully",
+                data = service.findLatest(),
+            )
+
+        return response.buildResponse()
+    }
+
     @GetMapping
     fun getByBannerName(
         @RequestParam("bannerName") bannerName: String,

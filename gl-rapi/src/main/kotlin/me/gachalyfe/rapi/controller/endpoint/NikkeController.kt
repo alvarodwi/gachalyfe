@@ -17,7 +17,7 @@ class NikkeController(
     private val service: NikkeService,
 ) {
     @GetMapping
-    fun getAll(
+    fun search(
         @RequestParam("name") name: String?,
     ): ResponseEntity<ApiResponse<List<Nikke>>> {
         val response =

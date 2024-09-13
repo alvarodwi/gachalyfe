@@ -1,6 +1,6 @@
 import useApi from '@api/services/rapi'
 import Breadcrumb from '@components/Breadcrumb'
-import ManufacturerEquipmentForm from '@components/forms/ManufacturerEquipmentForm'
+import ManufacturerEquipmentForm from '@components/input/ManufacturerEquipmentForm'
 import { ManufacturerEquipment } from '@models/domain/ManufacturerEquipment'
 import { ManufacturerArms } from '@models/form/ManufacturerArms'
 import dayjs from 'dayjs'
@@ -79,10 +79,11 @@ export default function InventoryArmsPage() {
               <input
                 type="number"
                 onChange={(event) => {
-                  setEquipmentCount(parseInt(event.target.value))
+                  const amount = parseInt(event.target.value)
+                  setEquipmentCount(amount <= 5 ? amount : 5)
                 }}
                 defaultValue={1}
-                max={10}
+                max={5}
                 min={1}
                 className="mt-1 w-fit border-black"
               />

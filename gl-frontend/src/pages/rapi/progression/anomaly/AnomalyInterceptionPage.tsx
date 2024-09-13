@@ -5,7 +5,7 @@ import { AnomalyInterception } from '@models/domain/AnomalyInterception'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { schema } from './validation'
-import ManufacturerEquipmentForm from '@components/forms/ManufacturerEquipmentForm'
+import ManufacturerEquipmentForm from '@components/input/ManufacturerEquipmentForm'
 import { useForm } from 'react-hook-form'
 import { ManufacturerEquipment } from '@models/domain/ManufacturerEquipment'
 

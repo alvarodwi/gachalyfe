@@ -6,7 +6,7 @@ import { schema } from './validation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import dayjs from 'dayjs'
-import ManufacturerEquipmentForm from '@components/forms/ManufacturerEquipmentForm'
+import ManufacturerEquipmentForm from '@components/input/ManufacturerEquipmentForm'
 import { ManufacturerEquipment } from '@models/domain/ManufacturerEquipment'
 
 export default function SpecialInterceptionPage() {

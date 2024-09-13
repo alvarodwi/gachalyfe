@@ -19,4 +19,7 @@ interface BannerGachaRepository : JpaRepository<BannerGachaEntity, Long> {
     fun findAllByPickUpName(
         @Param("name") name: String,
     ): List<BannerGachaEntity>
+
+    @Query("select b from banner_gacha b order by date desc limit 10")
+    fun findAllByLatest(): List<BannerGachaEntity>
 }

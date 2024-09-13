@@ -31,17 +31,18 @@ fun ManufacturerEquipmentDTO.toModel() =
         sourceType = EquipmentSourceType.entries[sourceType ?: 0],
     )
 
-fun ManufacturerArmsDTO.toModel() = equipments.map { e ->
-    ManufacturerEquipment(
-        id = 0,
-        date = date,
-        manufacturer = e.manufacturer,
-        classType = e.classType,
-        slotType = e.slotType,
-        sourceId = 0,
-        sourceType = EquipmentSourceType.ARMS
-    )
-}
+fun ManufacturerArmsDTO.toModel() =
+    equipments.map { e ->
+        ManufacturerEquipment(
+            id = 0,
+            date = date,
+            manufacturer = e.manufacturer,
+            classType = e.classType,
+            slotType = e.slotType,
+            sourceId = 0,
+            sourceType = EquipmentSourceType.ARMS,
+        )
+    }
 
 fun ManufacturerEquipment.toEntity() =
     ManufacturerEquipmentEntity(

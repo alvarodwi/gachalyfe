@@ -7,5 +7,5 @@ data class ManufacturerArmsDTO(
     @field:NotBlank
     val date: String,
     @field:Valid
-    val equipments: List<ManufacturerEquipmentDTO>
+    val equipments: List<ManufacturerEquipmentDTO>,
 )

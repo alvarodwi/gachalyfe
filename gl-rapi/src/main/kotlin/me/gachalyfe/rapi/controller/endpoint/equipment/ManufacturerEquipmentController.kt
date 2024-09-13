@@ -42,19 +42,18 @@ class ManufacturerEquipmentController(
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = service.findRecentBySourceType(EquipmentSourceType.ARMS,10),
+                data = service.findRecentBySourceType(EquipmentSourceType.ARMS, 10),
             )
         return response.buildResponse()
     }
 
-
     @GetMapping("arms")
-    fun getBySourceTypeArms() : ResponseEntity<ApiResponse<List<ManufacturerEquipment>>> {
+    fun getBySourceTypeArms(): ResponseEntity<ApiResponse<List<ManufacturerEquipment>>> {
         val response =
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = service.findAllBySourceType(EquipmentSourceType.ARMS)
+                data = service.findAllBySourceType(EquipmentSourceType.ARMS),
             )
         return response.buildResponse()
     }
@@ -62,7 +61,7 @@ class ManufacturerEquipmentController(
     @PostMapping("arms")
     fun saveManufacturerArms(
         @Valid @RequestBody dto: ManufacturerArmsDTO,
-    ) : ResponseEntity<ApiResponse<List<ManufacturerEquipment>>> {
+    ): ResponseEntity<ApiResponse<List<ManufacturerEquipment>>> {
         val response =
             ApiResponse.Success(
                 status = HttpStatus.CREATED.value(),

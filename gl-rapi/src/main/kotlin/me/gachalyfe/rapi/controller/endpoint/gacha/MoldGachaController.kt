@@ -26,8 +26,8 @@ class MoldGachaController(
 ) {
     private val log by lazyLogger()
 
-    @GetMapping
-    fun getLast10(): ResponseEntity<ApiResponse<List<MoldGacha>>> {
+    @GetMapping("latest")
+    fun getRecent(): ResponseEntity<ApiResponse<List<MoldGacha>>> {
         val response =
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),

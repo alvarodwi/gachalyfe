@@ -10,6 +10,11 @@ import InventoryArmsPage from '@pages/rapi/inventory/arms/InventoryArmsPage'
 import InventoryFurnacePage from '@pages/rapi/inventory/furnace/InventoryFurnacePage'
 import Root from '@pages/Root'
 import { CsvExportPage } from '@pages/rapi/csv/CsvExportPage'
+import GachaPage from '@pages/rapi/gacha/GachaPage'
+import EventBannerPage from '@pages/rapi/gacha/EventBannerPage'
+import RegularBannerPage from '@pages/rapi/gacha/RegularBannerPage'
+import SocialBannerPage from '@pages/rapi/gacha/SocialBannerPage'
+import MoldGachaPage from '@pages/rapi/gacha/MoldGachaPage'
 
 const appRouter = createBrowserRouter([
   { path: '/', element: <Root /> },
@@ -36,6 +41,17 @@ const appRouter = createBrowserRouter([
           { path: '', element: <InventoryPage /> },
           { path: 'arms', element: <InventoryArmsPage /> },
           { path: 'furnace', element: <InventoryFurnacePage /> },
+        ],
+      },
+      {
+        path: 'gacha',
+        element: <Outlet />,
+        children: [
+          { path: '', element: <GachaPage /> },
+          { path: 'event', element: <EventBannerPage /> },
+          { path: 'regular', element: <RegularBannerPage /> },
+          { path: 'social', element: <SocialBannerPage /> },
+          { path: 'mold', element: <MoldGachaPage /> },
         ],
       },
     ],

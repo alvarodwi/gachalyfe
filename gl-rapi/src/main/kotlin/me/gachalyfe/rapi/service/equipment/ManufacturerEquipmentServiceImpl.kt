@@ -31,9 +31,12 @@ class ManufacturerEquipmentServiceImpl(
         return data.map { it.toModel() }
     }
 
-    override fun findRecentBySourceType(sourceType: EquipmentSourceType, limit: Int): List<ManufacturerEquipment> {
+    override fun findRecentBySourceType(
+        sourceType: EquipmentSourceType,
+        limit: Int,
+    ): List<ManufacturerEquipment> {
         val data = repository.findBySourceType(sourceType.ordinal, Limit.of(limit))
-        return data.map{ it.toModel() }
+        return data.map { it.toModel() }
     }
 
     override fun findAllBySourceIdAndSourceType(

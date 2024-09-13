@@ -5,6 +5,8 @@ import me.gachalyfe.rapi.domain.model.gacha.BannerGacha
 interface BannerGachaService {
     fun findAll(): List<BannerGacha>
 
+    fun findLatest(): List<BannerGacha>
+
     fun findAllByBannerName(bannerName: String): List<BannerGacha>
 
     fun findById(id: Long): BannerGacha

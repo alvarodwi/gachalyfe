@@ -21,6 +21,11 @@ class BannerGachaServiceImpl(
         return data.map { it.toModel() }
     }
 
+    override fun findLatest(): List<BannerGacha> {
+        val data = repository.findAllByLatest()
+        return data.map { it.toModel() }
+    }
+
     override fun findAllByBannerName(bannerName: String): List<BannerGacha> {
         val data =
             when (bannerName) {
