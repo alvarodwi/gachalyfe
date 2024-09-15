@@ -11,6 +11,4 @@ data class SpecialInterceptionCsvSchema(
     val modules: Int,
     val t9ManufacturerEquipment: Int,
     val empty: Int,
-) {
-    constructor() : this(LocalDate.now(), "", 0, 0, 0, 0)
-}
+)

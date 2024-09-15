@@ -10,6 +10,4 @@ data class ManufacturerEquipmentCsvSchema(
     val manufacturer: String,
     val classType: String,
     val slotType: String,
-) {
-    constructor() : this(LocalDate.now(), "", "", "", "")
-}
+)
