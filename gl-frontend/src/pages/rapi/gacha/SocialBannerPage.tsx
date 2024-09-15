@@ -103,7 +103,7 @@ export default function SocialBannerPage() {
             />
           </div>
 
-          <div className="w-auto">
+          <div className="w-fit">
             <label htmlFor="nikkePulled" className="block text-sm">
               Nikke Pulled
             </label>

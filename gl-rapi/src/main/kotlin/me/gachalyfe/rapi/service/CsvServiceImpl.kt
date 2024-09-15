@@ -7,12 +7,17 @@ import jakarta.transaction.Transactional
 import me.gachalyfe.rapi.data.mapper.toCsvSchema
 import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.domain.model.AnomalyInterception
+import me.gachalyfe.rapi.domain.model.BannerGacha
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
+import me.gachalyfe.rapi.domain.model.MoldGacha
 import me.gachalyfe.rapi.domain.model.SpecialInterception
 import me.gachalyfe.rapi.domain.service.CsvService
+import me.gachalyfe.rapi.domain.service.NikkeService
 import me.gachalyfe.rapi.utils.csv.CsvHandler
 import me.gachalyfe.rapi.utils.csv.schema.AnomalyInterceptionCsvSchema
+import me.gachalyfe.rapi.utils.csv.schema.BannerGachaCsvSchema
 import me.gachalyfe.rapi.utils.csv.schema.ManufacturerEquipmentCsvSchema
+import me.gachalyfe.rapi.utils.csv.schema.MoldGachaCsvSchema
 import me.gachalyfe.rapi.utils.csv.schema.SpecialInterceptionCsvSchema
 import me.gachalyfe.rapi.utils.exception.CsvHandlingException
 import me.gachalyfe.rapi.utils.lazyLogger
@@ -29,6 +34,7 @@ import java.io.OutputStream
 @Service
 class CsvServiceImpl(
     private val applicationContext: ApplicationContext,
+    private val nikkeService: NikkeService,
 ) : CsvService {
     private val log by lazyLogger()
 
@@ -83,6 +89,46 @@ class CsvServiceImpl(
                     getCsvHandler<ManufacturerEquipment>().import(data)
                 }
 
+                "banner-gacha" -> {
+                    val data =
+                        readCsvData<BannerGachaCsvSchema>(inputStream)
+                            .map {
+                                it.toModel({ names ->
+                                    if (names.size == it.totalSSR) {
+                                        names.map { name ->
+                                            nikkeService.findAllByName(name, true).firstOrNull()
+                                                ?: throw CsvHandlingException("Failed to parse nikke name: $name")
+                                        }
+                                    } else {
+                                        throw CsvHandlingException(
+                                            "Number of SSR and Nikke Pulled does not match for entry ${it.date}-${it.pickUpName}",
+                                        )
+                                    }
+                                })
+                            }
+                    getCsvHandler<BannerGacha>().import(data)
+                }
+
+                "mold-gacha" -> {
+                    val data =
+                        readCsvData<MoldGachaCsvSchema>(inputStream)
+                            .map {
+                                it.toModel({ names ->
+                                    if (names.size == it.totalSSR) {
+                                        names.map { name ->
+                                            nikkeService.findAllByName(name, true).firstOrNull()
+                                                ?: throw CsvHandlingException("Failed to parse nikke name: $name")
+                                        }
+                                    } else {
+                                        throw CsvHandlingException(
+                                            "Number of SSR and Nikke Pulled does not match for entry ${it.date}-${it.type}",
+                                        )
+                                    }
+                                })
+                            }
+                    getCsvHandler<MoldGacha>().import(data)
+                }
+
                 else -> throw CsvHandlingException("CSV import target unknown")
             }
         return "Imported $totalImported $target data"
@@ -114,6 +160,24 @@ class CsvServiceImpl(
                         .map { it.toCsvSchema() },
                     outputStream,
                 )
+
+            "banner-gacha" -> {
+                writeCsvData(
+                    getCsvHandler<BannerGacha>()
+                        .export()
+                        .map { it.toCsvSchema() },
+                    outputStream,
+                )
+            }
+
+            "mold-gacha" -> {
+                writeCsvData(
+                    getCsvHandler<MoldGacha>()
+                        .export()
+                        .map { it.toCsvSchema() },
+                    outputStream,
+                )
+            }
 
             else -> throw CsvHandlingException("CSV export target unknown")
         }

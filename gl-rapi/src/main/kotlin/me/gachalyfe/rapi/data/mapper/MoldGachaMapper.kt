@@ -4,6 +4,10 @@ import me.gachalyfe.rapi.controller.dto.MoldGachaDTO
 import me.gachalyfe.rapi.data.entity.MoldGachaEntity
 import me.gachalyfe.rapi.domain.model.MoldGacha
 import me.gachalyfe.rapi.domain.model.MoldType
+import me.gachalyfe.rapi.domain.model.Nikke
+import me.gachalyfe.rapi.utils.csv.schema.MoldGachaCsvSchema
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 fun MoldGacha.toEntity() =
     MoldGachaEntity(
@@ -33,4 +37,23 @@ fun MoldGachaDTO.toModel() =
         amount = amount,
         totalSSR = totalSSR,
         nikkePulled = nikkePulled.map { it.toModel() },
+    )
+
+fun MoldGacha.toCsvSchema() =
+    MoldGachaCsvSchema(
+        date = LocalDate.parse(date),
+        type = type.name,
+        amount = amount,
+        totalSSR = totalSSR,
+        nikkePulled = nikkePulled.map { it.name },
+    )
+
+fun MoldGachaCsvSchema.toModel(nikkePulledMapper: (List<String>) -> List<Nikke>) =
+    MoldGacha(
+        id = 0,
+        date = date.format(DateTimeFormatter.ISO_DATE),
+        type = MoldType.valueOf(type.uppercase()),
+        amount = amount,
+        totalSSR = totalSSR,
+        nikkePulled = nikkePulledMapper(nikkePulled),
     )

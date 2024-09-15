@@ -24,7 +24,7 @@ class NikkeController(
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = name?.let { service.findAllByName(name) } ?: service.findAll(),
+                data = name?.let { service.findAllByName(name, false) } ?: service.findAll(),
             )
         return response.buildResponse()
     }

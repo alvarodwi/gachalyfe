@@ -76,7 +76,7 @@ class MoldGachaServiceImpl(
     }
 
     override fun saveAll(data: List<MoldGacha>): Int {
-        val saved = data.map { it.toEntity() }
+        val saved = data.map { save(it) }
         return saved.size
     }
 

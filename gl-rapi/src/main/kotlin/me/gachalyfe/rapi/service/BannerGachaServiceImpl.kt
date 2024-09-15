@@ -81,7 +81,7 @@ class BannerGachaServiceImpl(
     }
 
     override fun saveAll(data: List<BannerGacha>): Int {
-        val saved = data.map { it.toEntity() }
+        val saved = data.map { save(it) }
         return saved.size
     }
 
