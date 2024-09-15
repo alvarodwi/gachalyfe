@@ -1,11 +1,11 @@
 package me.gachalyfe.rapi.data.mapper
 
-import me.gachalyfe.rapi.controller.dto.equipment.ManufacturerArmsDTO
-import me.gachalyfe.rapi.controller.dto.equipment.ManufacturerEquipmentDTO
+import me.gachalyfe.rapi.controller.dto.ManufacturerArmsDTO
+import me.gachalyfe.rapi.controller.dto.ManufacturerEquipmentDTO
 import me.gachalyfe.rapi.data.entity.ManufacturerEquipmentEntity
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
-import me.gachalyfe.rapi.service.csv.schema.ManufacturerEquipmentCsvSchema
+import me.gachalyfe.rapi.utils.csv.schema.ManufacturerEquipmentCsvSchema
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 

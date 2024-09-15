@@ -15,8 +15,11 @@ class NikkeServiceImpl(
         return data.map { it.toModel() }
     }
 
-    override fun findAllByName(name: String): List<Nikke> {
-        val data = repository.findByNameContaining(name)
+    override fun findAllByName(
+        name: String,
+        strict: Boolean,
+    ): List<Nikke> {
+        val data = if (strict) repository.findByName(name) else repository.findByNameContaining(name)
         return data.map { it.toModel() }
     }
 

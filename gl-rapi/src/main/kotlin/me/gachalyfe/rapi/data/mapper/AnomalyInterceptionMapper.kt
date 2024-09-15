@@ -3,7 +3,7 @@ package me.gachalyfe.rapi.data.mapper
 import me.gachalyfe.rapi.controller.dto.AnomalyInterceptionDTO
 import me.gachalyfe.rapi.data.entity.AnomalyInterceptionEntity
 import me.gachalyfe.rapi.domain.model.AnomalyInterception
-import me.gachalyfe.rapi.service.csv.schema.AnomalyInterceptionCsvSchema
+import me.gachalyfe.rapi.utils.csv.schema.AnomalyInterceptionCsvSchema
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 

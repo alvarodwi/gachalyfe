@@ -18,6 +18,10 @@ export default function NikkeSelector(props: Props) {
   const [nikkeList, setNikkeList] = useState<NikkeItem[]>([])
 
   useEffect(() => {
+    setIsOpen(searchTerm != '')
+  }, [searchTerm])
+
+  useEffect(() => {
     async function searchNikke(name?: string) {
       const response = await api.search(name)
       if (response.status == 200) {
@@ -60,7 +64,6 @@ export default function NikkeSelector(props: Props) {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Add nikke by name"
-        onClick={() => setIsOpen(!isOpen)}
         className="w-fit border-black p-2"
       />
       {isOpen && (
