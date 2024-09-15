@@ -1,8 +1,8 @@
 package me.gachalyfe.rapi.data.mapper
 
-import me.gachalyfe.rapi.controller.dto.gacha.BannerGachaDTO
-import me.gachalyfe.rapi.data.entity.gacha.BannerGachaEntity
-import me.gachalyfe.rapi.domain.model.gacha.BannerGacha
+import me.gachalyfe.rapi.controller.dto.BannerGachaDTO
+import me.gachalyfe.rapi.data.entity.BannerGachaEntity
+import me.gachalyfe.rapi.domain.model.BannerGacha
 
 fun BannerGacha.toEntity() =
     BannerGachaEntity(

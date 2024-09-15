@@ -1,9 +1,9 @@
 package me.gachalyfe.rapi.data.mapper
 
-import me.gachalyfe.rapi.controller.dto.gacha.MoldGachaDTO
-import me.gachalyfe.rapi.data.entity.gacha.MoldGachaEntity
-import me.gachalyfe.rapi.domain.model.gacha.MoldGacha
-import me.gachalyfe.rapi.domain.model.gacha.MoldType
+import me.gachalyfe.rapi.controller.dto.MoldGachaDTO
+import me.gachalyfe.rapi.data.entity.MoldGachaEntity
+import me.gachalyfe.rapi.domain.model.MoldGacha
+import me.gachalyfe.rapi.domain.model.MoldType
 
 fun MoldGacha.toEntity() =
     MoldGachaEntity(
