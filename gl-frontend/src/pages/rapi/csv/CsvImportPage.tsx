@@ -1,49 +1,48 @@
 import { Controller, useForm } from 'react-hook-form'
-import { schema } from './validation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Papa from 'papaparse'
 import { useEffect, useState } from 'react'
 import { readableFileSize } from '@utils/utils'
-import { ImporterFile } from '@models/domain/ImporterFile'
 import useApi from '@api/services/rapi'
 import Breadcrumb from '@components/Breadcrumb'
-import { includes, some } from 'lodash'
+import { importCsvSchema } from '@utils/validation/schema'
+import FormErrorList from '@components/form/FormErrorList'
+
+interface FormData {
+  file: File | undefined
+  target: string
+  isValid: boolean
+}
 
 export default function CsvImportPage() {
   const api = useApi().csv
 
-  const { register, handleSubmit, watch, setValue, control } =
-    useForm<ImporterFile>({
-      resolver: zodResolver(schema),
-    })
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(importCsvSchema),
+    defaultValues: {
+      target: 'anomaly',
+      isValid: false,
+    },
+  })
 
   const [tableRows, setTableRows] = useState<string[]>([])
   const [tableValues, setTableValues] = useState<string[][]>([[]])
 
   const file = watch('file')
+  const target = watch('target')
 
   useEffect(() => {
     if (file) {
       parseCsv(file)
     }
   }, [file])
-
-  useEffect(() => {
-    setValue('target', inferTargetImportFromRows(tableRows))
-  }, [tableRows, setValue])
-
-  function inferTargetImportFromRows(rows: string[]): string {
-    if (some(rows, (item) => includes(item.toLowerCase(), 'drop'))) {
-      return 'anomaly'
-    }
-    if (some(rows, (item) => includes(item.toLowerCase(), 't9'))) {
-      return 'special'
-    }
-    if (some(rows, (item) => includes(item.toLowerCase(), 'class'))) {
-      return 'equipment'
-    }
-    return 'unknown'
-  }
 
   function parseCsv(file: File) {
     Papa.parse(file, {
@@ -66,7 +65,7 @@ export default function CsvImportPage() {
     })
   }
 
-  async function onSubmit(data: ImporterFile) {
+  async function onSubmit(data: FormData) {
     const response = await api.importFile(data)
     if (response.status == 200) {
       alert(response.message)
@@ -87,6 +86,21 @@ export default function CsvImportPage() {
           onSubmit={handleSubmit(onSubmit)}
           className="mt-8 flex w-full flex-col gap-4"
         >
+          <div className="w-fit">
+            <label htmlFor="target" className="block">
+              Import type
+            </label>
+            <select
+              {...register('target')}
+              className="w-fit-md mt-1 border-black text-sm"
+            >
+              <option value="anomaly">Anomaly Interceptions</option>
+              <option value="special">Special Interceptions</option>
+              <option value="equipment">Manufacturer Equipments</option>
+              <option value="mold-gacha">Mold Gacha</option>
+              <option value="banner-gacha">Banner Gacha</option>
+            </select>
+          </div>
           <div>
             <label className="block">CSV file</label>
             <div className="flex w-full items-end gap-4">
@@ -119,23 +133,6 @@ export default function CsvImportPage() {
                 </>
               )}
             </div>
-          </div>
-
-          <div className="w-fit">
-            <label htmlFor="target" className="block">
-              Import type
-            </label>
-            <select
-              {...register('target')}
-              className="w-fit-md mt-1 border-black text-sm"
-              defaultValue={'unknown'}
-              disabled
-            >
-              <option value="unknown">Unknown</option>
-              <option value="anomaly">Anomaly Interceptions</option>
-              <option value="special">Special Interceptions</option>
-              <option value="equipment">Manufacturer Equipments</option>
-            </select>
           </div>
 
           {file && (
@@ -184,12 +181,37 @@ export default function CsvImportPage() {
             </div>
           )}
 
+          <div className="w-auto">
+            <label
+              htmlFor="dropped"
+              className="flex cursor-pointer items-start gap-4"
+            >
+              <div className="flex items-end">
+                &#8203;
+                <input
+                  {...register('isValid')}
+                  type="checkbox"
+                  disabled
+                  className="border-gray size-4 border-solid text-black accent-black"
+                />
+              </div>
+
+              <div className="flex flex-col">
+                <strong className="font-medium">Is Valid .csv format</strong>
+                <i className="text-xs">
+                  Automatically checked from csv files...
+                </i>
+              </div>
+            </label>
+          </div>
+
           <button
             type="submit"
             className="w-full border border-black px-3 py-2 text-xl font-bold"
           >
             Import
           </button>
+          <FormErrorList errors={errors} />
         </form>
       </div>
     </main>

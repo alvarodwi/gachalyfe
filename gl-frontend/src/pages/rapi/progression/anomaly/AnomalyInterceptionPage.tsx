@@ -4,10 +4,11 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { AnomalyInterception } from '@models/domain/AnomalyInterception'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
-import { schema } from './validation'
 import ManufacturerEquipmentForm from '@components/input/ManufacturerEquipmentForm'
 import { useForm } from 'react-hook-form'
 import { ManufacturerEquipment } from '@models/domain/ManufacturerEquipment'
+import { anomalyInterceptionSchema } from '@utils/validation/schema'
+import FormErrorList from '@components/form/FormErrorList'
 
 export default function AnomalyInterceptionPage() {
   const api = useApi().anomaly
@@ -15,16 +16,21 @@ export default function AnomalyInterceptionPage() {
   const [isEquipmentFormVisible, setIsEquipmentFormVisible] =
     useState<boolean>()
 
-  const { register, handleSubmit, watch, setValue } =
-    useForm<AnomalyInterception>({
-      resolver: zodResolver(schema),
-      defaultValues: {
-        date: dayjs().format('YYYY-MM-DD'),
-        bossName: 'Kraken',
-        stage: 6,
-        dropped: true,
-      },
-    })
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<AnomalyInterception>({
+    resolver: zodResolver(anomalyInterceptionSchema),
+    defaultValues: {
+      date: dayjs().format('YYYY-MM-DD'),
+      bossName: 'Kraken',
+      stage: 6,
+      dropped: true,
+    },
+  })
 
   // watched variables
   const bossName = watch('bossName')
@@ -218,6 +224,7 @@ export default function AnomalyInterceptionPage() {
           <button className="mt-4 w-full cursor-pointer border-2 border-black py-2 text-xl font-bold">
             Submit
           </button>
+          <FormErrorList errors={errors} />
         </form>
       </div>
       <div
