@@ -25,7 +25,7 @@ export default function NikkeSelector(props: Props) {
     async function searchNikke(name?: string) {
       const response = await api.search(name)
       if (response.status == 200) {
-        setNikkeList(response.data ?? [])
+        setNikkeList(response.data?.content ?? [])
       } else {
         console.error(response.message)
       }

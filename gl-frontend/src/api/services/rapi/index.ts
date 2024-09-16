@@ -4,14 +4,16 @@ import { SpecialInterceptionService } from './SpecialInterceptionService'
 import CsvService from './CsvService'
 import { EquipmentService } from './EquipmentService'
 import { NikkeService } from './NikkeService'
-import { GachaService } from './GachaService'
+import { GachaService as BannerGachaService } from './GachaService'
+import MoldGachaService from './MoldGachaService'
 
 interface ServiceInstance {
   anomaly: AnomalyInterceptionService
   special: SpecialInterceptionService
   equipment: EquipmentService
   nikke: NikkeService
-  gacha: GachaService
+  banners: BannerGachaService
+  molds: MoldGachaService
   csv: CsvService
 }
 
@@ -26,7 +28,8 @@ export default function useApi() {
     special: new SpecialInterceptionService(apiFetcher),
     equipment: new EquipmentService(apiFetcher),
     nikke: new NikkeService(apiFetcher),
-    gacha: new GachaService(apiFetcher),
+    banners: new BannerGachaService(apiFetcher),
+    molds: new MoldGachaService(apiFetcher),
     csv: new CsvService(apiFetcher),
   }
 

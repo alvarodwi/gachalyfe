@@ -96,7 +96,7 @@ class CsvServiceImpl(
                                 it.toModel({ names ->
                                     if (names.size == it.totalSSR) {
                                         names.map { name ->
-                                            nikkeService.findAllByName(name, true).firstOrNull()
+                                            nikkeService.findByName(name)
                                                 ?: throw CsvHandlingException("Failed to parse nikke name: $name")
                                         }
                                     } else {
@@ -116,7 +116,7 @@ class CsvServiceImpl(
                                 it.toModel({ names ->
                                     if (names.size == it.totalSSR) {
                                         names.map { name ->
-                                            nikkeService.findAllByName(name, true).firstOrNull()
+                                            nikkeService.findByName(name)
                                                 ?: throw CsvHandlingException("Failed to parse nikke name: $name")
                                         }
                                     } else {

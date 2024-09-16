@@ -2,12 +2,16 @@ package me.gachalyfe.rapi.controller.endpoint
 
 import jakarta.validation.Valid
 import me.gachalyfe.rapi.controller.ApiResponse
+import me.gachalyfe.rapi.controller.Pagination
 import me.gachalyfe.rapi.controller.buildResponse
 import me.gachalyfe.rapi.controller.dto.MoldGachaDTO
+import me.gachalyfe.rapi.controller.toPagination
 import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.domain.model.MoldGacha
 import me.gachalyfe.rapi.domain.service.MoldGachaService
 import me.gachalyfe.rapi.utils.lazyLogger
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -26,13 +31,25 @@ class MoldGachaController(
 ) {
     private val log by lazyLogger()
 
-    @GetMapping("latest")
-    fun getRecent(): ResponseEntity<ApiResponse<List<MoldGacha>>> {
+    @GetMapping()
+    fun getAll(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
+        @RequestParam(defaultValue = "date") sortBy: String,
+        @RequestParam(defaultValue = "asc") sortDirection: String,
+    ): ResponseEntity<ApiResponse<Pagination<MoldGacha>>> {
+        val sort =
+            if (sortDirection.equals("asc", ignoreCase = true)) {
+                Sort.by(sortBy).ascending()
+            } else {
+                Sort.by(sortBy).descending()
+            }
+        val pageable = PageRequest.of(page, size, sort)
         val response =
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = service.findAllByLatest(),
+                data = service.findAll(pageable).toPagination(),
             )
         return response.buildResponse()
     }

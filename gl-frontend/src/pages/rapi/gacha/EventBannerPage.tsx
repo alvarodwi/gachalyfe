@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 export default function EventBannerPage() {
-  const api = useApi().gacha
+  const api = useApi().banners
   const [result, setResult] = useState<BannerGacha[]>()
 
   const { register, handleSubmit, watch, setValue } = useForm<BannerGacha>({
@@ -16,9 +16,12 @@ export default function EventBannerPage() {
   })
 
   async function loadResult() {
-    const response = await api.getRecentBannerGacha()
+    const response = await api.getByName('Event', {
+      sortBy: 'date',
+      sortDirection: 'desc',
+    })
     if (response.status == 200) {
-      setResult(response.data)
+      setResult(response.data?.content)
     } else {
       console.error(response.message)
     }
@@ -41,7 +44,7 @@ export default function EventBannerPage() {
   }
 
   async function onSubmit(data: BannerGacha) {
-    const response = await api.addBannerGacha(data)
+    const response = await api.createNew(data)
     if (response.status == 201) {
       alert(response.message)
     } else {

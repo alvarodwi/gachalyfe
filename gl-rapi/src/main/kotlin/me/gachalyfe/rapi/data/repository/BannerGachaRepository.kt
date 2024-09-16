@@ -2,24 +2,8 @@ package me.gachalyfe.rapi.data.repository
 
 import me.gachalyfe.rapi.data.entity.BannerGachaEntity
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Query
-import org.springframework.data.repository.query.Param
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 
-interface BannerGachaRepository : JpaRepository<BannerGachaEntity, Long> {
-    @Query("select b from banner_gacha b where pickUpName = 'Social' order by date desc")
-    fun findAllByPickUpNameSocial(): List<BannerGachaEntity>
-
-    @Query("select b from banner_gacha b where pickUpName = 'Regular' order by date desc")
-    fun findAllByPickUpNameRegular(): List<BannerGachaEntity>
-
-    @Query("select b from banner_gacha b where pickUpName not in ('Social', 'Regular', 'Unknown') order by date desc")
-    fun findAllByPickUpNameLimited(): List<BannerGachaEntity>
-
-    @Query("select b from banner_gacha b where pickUpName = :name")
-    fun findAllByPickUpName(
-        @Param("name") name: String,
-    ): List<BannerGachaEntity>
-
-    @Query("select b from banner_gacha b order by date desc limit 10")
-    fun findAllByLatest(): List<BannerGachaEntity>
-}
+interface BannerGachaRepository :
+    JpaRepository<BannerGachaEntity, Long>,
+    JpaSpecificationExecutor<BannerGachaEntity>

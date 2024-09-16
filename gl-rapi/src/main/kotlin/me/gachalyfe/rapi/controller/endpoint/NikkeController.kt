@@ -1,9 +1,13 @@
 package me.gachalyfe.rapi.controller.endpoint
 
 import me.gachalyfe.rapi.controller.ApiResponse
+import me.gachalyfe.rapi.controller.Pagination
 import me.gachalyfe.rapi.controller.buildResponse
+import me.gachalyfe.rapi.controller.toPagination
 import me.gachalyfe.rapi.domain.model.Nikke
 import me.gachalyfe.rapi.domain.service.NikkeService
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,13 +22,16 @@ class NikkeController(
 ) {
     @GetMapping
     fun search(
-        @RequestParam("name") name: String?,
-    ): ResponseEntity<ApiResponse<List<Nikke>>> {
+        @RequestParam("name") name: String,
+        @RequestParam("size", defaultValue = "5") size: Int,
+    ): ResponseEntity<ApiResponse<Pagination<Nikke>>> {
+        val sort = Sort.by("name")
+        val pageable = PageRequest.of(0, size, sort)
         val response =
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = name?.let { service.findAllByName(name, false) } ?: service.findAll(),
+                data = service.findByNameLike(name, pageable).toPagination(),
             )
         return response.buildResponse()
     }
