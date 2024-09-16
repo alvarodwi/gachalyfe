@@ -4,11 +4,14 @@ import me.gachalyfe.rapi.data.entity.ManufacturerEquipmentEntity
 import me.gachalyfe.rapi.data.mapper.toEntity
 import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.data.repository.ManufacturerEquipmentRepository
+import me.gachalyfe.rapi.data.spec.ManufacturerEquipmentSpecs
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
 import me.gachalyfe.rapi.domain.service.ManufacturerEquipmentService
 import me.gachalyfe.rapi.utils.exception.ResourceNotFoundException
-import org.springframework.data.domain.Limit
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -16,38 +19,36 @@ import org.springframework.stereotype.Service
 class ManufacturerEquipmentServiceImpl(
     private val repository: ManufacturerEquipmentRepository,
 ) : ManufacturerEquipmentService {
-    override fun findAll(): List<ManufacturerEquipment> {
-        val data = repository.findAllByOrderByDateAsc()
+    override fun findAll(pageable: Pageable): Page<ManufacturerEquipment> {
+        val data = repository.findAll(pageable)
         return data.map { it.toModel() }
     }
 
-    override fun findAllByLatest(): List<ManufacturerEquipment> {
-        val data = repository.findLatest()
+    override fun findAll(sort: Sort): List<ManufacturerEquipment> {
+        val data = repository.findAll(sort)
         return data.map { it.toModel() }
     }
 
-    override fun findAllBySourceType(sourceType: EquipmentSourceType): List<ManufacturerEquipment> {
-        val data = repository.findBySourceType(sourceType.ordinal, Limit.unlimited())
-        return data.map { it.toModel() }
-    }
-
-    override fun findRecentBySourceType(
+    override fun findBySourceType(
         sourceType: EquipmentSourceType,
-        limit: Int,
-    ): List<ManufacturerEquipment> {
-        val data = repository.findBySourceType(sourceType.ordinal, Limit.of(limit))
+        pageable: Pageable,
+    ): Page<ManufacturerEquipment> {
+        val specs = ManufacturerEquipmentSpecs.isInType(sourceType)
+        val data = repository.findAll(specs, pageable)
         return data.map { it.toModel() }
     }
 
-    override fun findAllBySourceIdAndSourceType(
+    override fun findBySourceIdAndSourceType(
         sourceId: Long,
         sourceType: EquipmentSourceType,
-    ): List<ManufacturerEquipment> =
-        repository
-            .findBySourceIdAndSourceType(
-                sourceId = sourceId,
-                sourceType = sourceType.ordinal,
-            ).map { it.toModel() }
+    ): List<ManufacturerEquipment> {
+        val specs =
+            ManufacturerEquipmentSpecs
+                .isInType(sourceType)
+                .and(ManufacturerEquipmentSpecs.withSourceId(sourceId))
+        val data = repository.findAll(specs)
+        return data.map { it.toModel() }
+    }
 
     override fun save(model: ManufacturerEquipment): ManufacturerEquipment {
         val newEquipment = model.toEntity()

@@ -11,6 +11,4 @@ data class AnomalyInterceptionCsvSchema(
     val dropType: String,
     val dropped: Boolean,
     val modules: Int,
-) {
-    constructor() : this(LocalDate.now(), "", 0, "", false, 0)
-}
+)

@@ -1,14 +1,14 @@
 package me.gachalyfe.rapi.domain.service
 
 import me.gachalyfe.rapi.domain.model.MoldGacha
-import me.gachalyfe.rapi.domain.model.MoldType
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 
 interface MoldGachaService {
-    fun findAll(): List<MoldGacha>
+    fun findAll(pageable: Pageable): Page<MoldGacha>
 
-    fun findAllByLatest(): List<MoldGacha>
-
-    fun findAllByMoldType(moldType: MoldType): List<MoldGacha>
+    fun findAll(sort: Sort): List<MoldGacha>
 
     fun findById(id: Long): MoldGacha
 

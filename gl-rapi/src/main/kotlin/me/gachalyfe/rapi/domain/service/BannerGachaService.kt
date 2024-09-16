@@ -1,13 +1,19 @@
 package me.gachalyfe.rapi.domain.service
 
 import me.gachalyfe.rapi.domain.model.BannerGacha
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 
 interface BannerGachaService {
-    fun findAll(): List<BannerGacha>
+    fun findAll(pageable: Pageable): Page<BannerGacha>
 
-    fun findLatest(): List<BannerGacha>
+    fun findAll(sort: Sort): List<BannerGacha>
 
-    fun findAllByBannerName(bannerName: String): List<BannerGacha>
+    fun findByBannerName(
+        bannerName: String,
+        pageable: Pageable,
+    ): Page<BannerGacha>
 
     fun findById(id: Long): BannerGacha
 

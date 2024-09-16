@@ -4,11 +4,13 @@ import me.gachalyfe.rapi.data.mapper.toEntity
 import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.data.repository.MoldGachaRepository
 import me.gachalyfe.rapi.domain.model.MoldGacha
-import me.gachalyfe.rapi.domain.model.MoldType
 import me.gachalyfe.rapi.domain.service.MoldGachaService
 import me.gachalyfe.rapi.domain.service.NikkeService
 import me.gachalyfe.rapi.utils.equalsIgnoreOrder
 import me.gachalyfe.rapi.utils.exception.ResourceNotFoundException
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -17,18 +19,13 @@ class MoldGachaServiceImpl(
     private val repository: MoldGachaRepository,
     private val nikkeService: NikkeService,
 ) : MoldGachaService {
-    override fun findAll(): List<MoldGacha> {
-        val data = repository.findAll()
+    override fun findAll(pageable: Pageable): Page<MoldGacha> {
+        val data = repository.findAll(pageable)
         return data.map { it.toModel() }
     }
 
-    override fun findAllByLatest(): List<MoldGacha> {
-        val data = repository.findLatest()
-        return data.map { it.toModel() }
-    }
-
-    override fun findAllByMoldType(moldType: MoldType): List<MoldGacha> {
-        val data = repository.findAllByMoldType(moldType.ordinal)
+    override fun findAll(sort: Sort): List<MoldGacha> {
+        val data = repository.findAll(sort)
         return data.map { it.toModel() }
     }
 

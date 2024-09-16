@@ -2,13 +2,17 @@ package me.gachalyfe.rapi.controller.endpoint
 
 import jakarta.validation.Valid
 import me.gachalyfe.rapi.controller.ApiResponse
+import me.gachalyfe.rapi.controller.Pagination
 import me.gachalyfe.rapi.controller.buildResponse
 import me.gachalyfe.rapi.controller.dto.ManufacturerArmsDTO
 import me.gachalyfe.rapi.controller.dto.ManufacturerEquipmentDTO
+import me.gachalyfe.rapi.controller.toPagination
 import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
 import me.gachalyfe.rapi.domain.service.ManufacturerEquipmentService
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -26,34 +31,49 @@ class ManufacturerEquipmentController(
     private val service: ManufacturerEquipmentService,
 ) {
     @GetMapping
-    fun getAll(): ResponseEntity<ApiResponse<List<ManufacturerEquipment>>> {
+    fun getEquipments(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
+        @RequestParam(defaultValue = "date") sortBy: String,
+        @RequestParam(defaultValue = "asc") sortDirection: String,
+    ): ResponseEntity<ApiResponse<Pagination<ManufacturerEquipment>>> {
+        val sort =
+            if (sortDirection.equals("asc", ignoreCase = true)) {
+                Sort.by(sortBy).ascending()
+            } else {
+                Sort.by(sortBy).descending()
+            }
+        val pageable = PageRequest.of(page, size, sort)
         val response =
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = service.findAll(),
+                data = service.findAll(pageable).toPagination(),
             )
         return response.buildResponse()
     }
 
-    @GetMapping("arms/latest")
-    fun getLatestBySourceTypeArms(): ResponseEntity<ApiResponse<List<ManufacturerEquipment>>> {
+    @GetMapping("{type}")
+    fun getEquipmentsBySourceType(
+        @PathVariable("type") type: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
+        @RequestParam(defaultValue = "date") sortBy: String,
+        @RequestParam(defaultValue = "asc") sortDirection: String,
+    ): ResponseEntity<ApiResponse<Pagination<ManufacturerEquipment>>> {
+        val sort =
+            if (sortDirection.equals("asc", ignoreCase = true)) {
+                Sort.by(sortBy).ascending()
+            } else {
+                Sort.by(sortBy).descending()
+            }
+        val pageable = PageRequest.of(page, size, sort)
+        val sourceType = EquipmentSourceType.valueOf(type.uppercase())
         val response =
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = service.findRecentBySourceType(EquipmentSourceType.ARMS, 10),
-            )
-        return response.buildResponse()
-    }
-
-    @GetMapping("arms")
-    fun getBySourceTypeArms(): ResponseEntity<ApiResponse<List<ManufacturerEquipment>>> {
-        val response =
-            ApiResponse.Success(
-                status = HttpStatus.OK.value(),
-                message = "Data retrieved successfully",
-                data = service.findAllBySourceType(EquipmentSourceType.ARMS),
+                data = service.findBySourceType(sourceType, pageable).toPagination(),
             )
         return response.buildResponse()
     }
@@ -72,7 +92,7 @@ class ManufacturerEquipmentController(
     }
 
     @PutMapping("{id}")
-    fun update(
+    fun updateEquipment(
         @PathVariable("id") id: Long,
         @Valid @RequestBody dto: ManufacturerEquipmentDTO,
     ): ResponseEntity<ApiResponse<ManufacturerEquipment>> {
@@ -86,7 +106,7 @@ class ManufacturerEquipmentController(
     }
 
     @DeleteMapping("{id}")
-    fun delete(
+    fun deleteEquipment(
         @PathVariable("id") id: Long,
     ): ResponseEntity<ApiResponse<Boolean>> {
         val response =

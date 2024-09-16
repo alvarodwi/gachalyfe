@@ -1,14 +1,20 @@
 package me.gachalyfe.rapi.domain.service
 
 import me.gachalyfe.rapi.domain.model.Nikke
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 
 interface NikkeService {
+    fun findAll(pageable: Pageable): Page<Nikke>
+
     fun findAll(): List<Nikke>
 
-    fun findAllByName(
+    fun findByNameLike(
         name: String,
-        strict: Boolean,
-    ): List<Nikke>
+        pageable: Pageable,
+    ): Page<Nikke>
+
+    fun findByName(name: String): Nikke?
 
     fun findByIdIn(ids: List<Long>): List<Nikke>
 }

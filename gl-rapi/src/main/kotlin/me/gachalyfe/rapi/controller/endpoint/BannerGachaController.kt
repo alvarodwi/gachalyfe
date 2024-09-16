@@ -2,12 +2,16 @@ package me.gachalyfe.rapi.controller.endpoint
 
 import jakarta.validation.Valid
 import me.gachalyfe.rapi.controller.ApiResponse
+import me.gachalyfe.rapi.controller.Pagination
 import me.gachalyfe.rapi.controller.buildResponse
 import me.gachalyfe.rapi.controller.dto.BannerGachaDTO
+import me.gachalyfe.rapi.controller.toPagination
 import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.domain.model.BannerGacha
 import me.gachalyfe.rapi.domain.service.BannerGachaService
 import me.gachalyfe.rapi.utils.lazyLogger
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -27,27 +31,30 @@ class BannerGachaController(
 ) {
     private val log by lazyLogger()
 
-    @GetMapping("latest")
-    fun getRecents(): ResponseEntity<ApiResponse<List<BannerGacha>>> {
-        val response =
-            ApiResponse.Success(
-                status = HttpStatus.OK.value(),
-                message = "Data retrieved successfully",
-                data = service.findLatest(),
-            )
-
-        return response.buildResponse()
-    }
-
     @GetMapping
-    fun getByBannerName(
-        @RequestParam("bannerName") bannerName: String,
-    ): ResponseEntity<ApiResponse<List<BannerGacha>>> {
+    fun getAll(
+        @RequestParam("bannerName") bannerName: String?,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
+        @RequestParam(defaultValue = "date") sortBy: String,
+        @RequestParam(defaultValue = "asc") sortDirection: String,
+    ): ResponseEntity<ApiResponse<Pagination<BannerGacha>>> {
+        val sort =
+            if (sortDirection.equals("asc", ignoreCase = true)) {
+                Sort.by(sortBy).ascending()
+            } else {
+                Sort.by(sortBy).descending()
+            }
+        val pageable = PageRequest.of(page, size, sort)
+        val data =
+            bannerName?.let {
+                service.findByBannerName(it, pageable)
+            } ?: service.findAll(pageable)
         val response =
             ApiResponse.Success(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
-                data = service.findAllByBannerName(bannerName),
+                data = data.toPagination(),
             )
         return response.buildResponse()
     }

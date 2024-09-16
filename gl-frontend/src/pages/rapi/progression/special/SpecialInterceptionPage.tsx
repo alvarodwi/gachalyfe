@@ -78,9 +78,9 @@ export default function SpecialInterceptionPage() {
   }
 
   async function loadAttempts() {
-    const response = await api.getRecent()
+    const response = await api.getAll({ sortBy: 'date', sortDirection: 'desc' })
     if (response.status == 200) {
-      setAttempts(response.data)
+      setAttempts(response.data?.content)
     } else {
       console.log(`Error: ${response.message}`)
     }

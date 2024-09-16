@@ -3,11 +3,15 @@ package me.gachalyfe.rapi.service
 import me.gachalyfe.rapi.data.mapper.toEntity
 import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.data.repository.BannerGachaRepository
+import me.gachalyfe.rapi.data.spec.BannerGachaSpecs
 import me.gachalyfe.rapi.domain.model.BannerGacha
 import me.gachalyfe.rapi.domain.service.BannerGachaService
 import me.gachalyfe.rapi.domain.service.NikkeService
 import me.gachalyfe.rapi.utils.equalsIgnoreOrder
 import me.gachalyfe.rapi.utils.exception.ResourceNotFoundException
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -16,24 +20,28 @@ class BannerGachaServiceImpl(
     private val repository: BannerGachaRepository,
     private val nikkeService: NikkeService,
 ) : BannerGachaService {
-    override fun findAll(): List<BannerGacha> {
-        val data = repository.findAll()
+    override fun findAll(pageable: Pageable): Page<BannerGacha> {
+        val data = repository.findAll(pageable)
         return data.map { it.toModel() }
     }
 
-    override fun findLatest(): List<BannerGacha> {
-        val data = repository.findAllByLatest()
+    override fun findAll(sort: Sort): List<BannerGacha> {
+        val data = repository.findAll(sort)
         return data.map { it.toModel() }
     }
 
-    override fun findAllByBannerName(bannerName: String): List<BannerGacha> {
-        val data =
-            when (bannerName) {
-                "Social" -> repository.findAllByPickUpNameSocial()
-                "Regular" -> repository.findAllByPickUpNameRegular()
-                "Limited" -> repository.findAllByPickUpNameLimited()
-                else -> repository.findAllByPickUpName(bannerName)
+    override fun findByBannerName(
+        bannerName: String,
+        pageable: Pageable,
+    ): Page<BannerGacha> {
+        val specs =
+            when (bannerName.lowercase()) {
+                "social" -> BannerGachaSpecs.isSocialPulls()
+                "regular" -> BannerGachaSpecs.isRegularPulls()
+                "event" -> BannerGachaSpecs.isEventPulls()
+                else -> throw IllegalStateException("Unknown banner name")
             }
+        val data = repository.findAll(specs, pageable)
         return data.map { it.toModel() }
     }
 

@@ -1,12 +1,17 @@
 import HttpFactory from '@api/HttpFactory'
-import { ApiResponse } from '@api/types'
+import { ApiResponse, PagedQuery, Pagination } from '@api/types'
 import { AnomalyInterception } from '@models/domain/AnomalyInterception'
 
 export class AnomalyInterceptionService extends HttpFactory {
-  async getRecent(): Promise<ApiResponse<AnomalyInterception[]>> {
+  async getAll(
+    query: PagedQuery
+  ): Promise<ApiResponse<Pagination<AnomalyInterception>>> {
     return await this.call({
       method: 'get',
-      url: '/anomaly-interceptions/latest',
+      url: '/anomaly-interceptions',
+      extras: {
+        query: { ...query },
+      },
     })
   }
 

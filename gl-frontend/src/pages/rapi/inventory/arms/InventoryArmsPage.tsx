@@ -18,9 +18,12 @@ export default function InventoryArmsPage() {
   })
 
   async function loadEquipments() {
-    const response = await api.getArms()
+    const response = await api.getByType('arms', {
+      sortBy: 'date',
+      sortDirection: 'desc',
+    })
     if (response.status == 200) {
-      setArmsEquipments(response.data)
+      setArmsEquipments(response.data?.content)
     } else {
       console.error(response.message)
     }
@@ -96,18 +99,14 @@ export default function InventoryArmsPage() {
                 Equipment(s)
               </label>
               {[...Array(equipmentCount)].map((_, i) => (
-                <>
-                  <div className="flex flex-row items-end gap-4">
-                    <span className="mb-4 w-1/12 text-center text-xl">
-                      #{i + 1}
-                    </span>
-                    <ManufacturerEquipmentForm
-                      onChange={(data) => handleEquipmentChange(data, i)}
-                      key={i}
-                    />
-                  </div>
-                  <hr />
-                </>
+                <div className="flex flex-row items-end gap-4 border-b" key={i}>
+                  <span className="mb-4 w-1/12 text-center text-xl">
+                    #{i + 1}
+                  </span>
+                  <ManufacturerEquipmentForm
+                    onChange={(data) => handleEquipmentChange(data, i)}
+                  />
+                </div>
               ))}
             </div>
           )}

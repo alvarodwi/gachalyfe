@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 export default function MoldGachaPage() {
-  const api = useApi().gacha
+  const api = useApi().molds
   const [result, setResult] = useState<MoldGacha[]>()
 
   const { register, handleSubmit, watch, setValue } = useForm<MoldGacha>({
@@ -19,9 +19,9 @@ export default function MoldGachaPage() {
   })
 
   async function loadResult() {
-    const response = await api.getRecentMoldGacha()
+    const response = await api.getAll({ sortBy: 'date', sortDirection: 'desc' })
     if (response.status == 200) {
-      setResult(response.data)
+      setResult(response.data?.content)
     } else {
       console.error(response.message)
     }
@@ -36,7 +36,7 @@ export default function MoldGachaPage() {
   }
 
   async function onSubmit(data: MoldGacha) {
-    const response = await api.addMoldGacha(data)
+    const response = await api.createNew(data)
     if (response.status == 201) {
       alert(response.message)
     } else {

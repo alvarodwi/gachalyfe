@@ -2,21 +2,8 @@ package me.gachalyfe.rapi.data.repository
 
 import me.gachalyfe.rapi.data.entity.AnomalyInterceptionEntity
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Query
-import org.springframework.data.repository.query.Param
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 
-interface AnomalyInterceptionRepository : JpaRepository<AnomalyInterceptionEntity, Long> {
-    @Query("select a from anomaly_interceptions a order by a.date desc limit :limit")
-    fun findLatest(
-        @Param("limit") limit: Int = 10,
-    ): List<AnomalyInterceptionEntity>
-
-    @Query(
-        "select a.id from anomaly_interceptions a where date = :date and dropped = true and dropType != 'Modules'",
-    )
-    fun findIdsByDateAndEquipmentDropped(
-        @Param("date") date: String,
-    ): List<Long>
-
-    fun findAllByOrderByDateAsc(): List<AnomalyInterceptionEntity>
-}
+interface AnomalyInterceptionRepository :
+    JpaRepository<AnomalyInterceptionEntity, Long>,
+    JpaSpecificationExecutor<AnomalyInterceptionEntity>

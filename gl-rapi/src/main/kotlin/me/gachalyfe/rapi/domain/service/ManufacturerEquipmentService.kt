@@ -2,23 +2,24 @@ package me.gachalyfe.rapi.domain.service
 
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 
 interface ManufacturerEquipmentService {
-    fun findAll(): List<ManufacturerEquipment>
+    fun findAll(pageable: Pageable): Page<ManufacturerEquipment>
 
-    fun findAllBySourceType(sourceType: EquipmentSourceType): List<ManufacturerEquipment>
+    fun findAll(sort: Sort): List<ManufacturerEquipment>
 
-    fun findRecentBySourceType(
+    fun findBySourceType(
         sourceType: EquipmentSourceType,
-        limit: Int = 0,
-    ): List<ManufacturerEquipment>
+        pageable: Pageable,
+    ): Page<ManufacturerEquipment>
 
-    fun findAllBySourceIdAndSourceType(
+    fun findBySourceIdAndSourceType(
         sourceId: Long,
         sourceType: EquipmentSourceType,
     ): List<ManufacturerEquipment>
-
-    fun findAllByLatest(): List<ManufacturerEquipment>
 
     fun save(model: ManufacturerEquipment): ManufacturerEquipment
 
