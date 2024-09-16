@@ -184,7 +184,7 @@ export default function CsvImportPage() {
     <main className="bg-gray-1 flex min-h-screen w-full font-serif">
       <div
         id="content"
-        className="m-4 mx-auto flex w-1/3 flex-col items-start border border-gray-300 bg-white p-4"
+        className="m-4 mx-auto flex w-2/3 flex-col items-start border border-gray-300 bg-white p-4"
       >
         <Breadcrumb className="my-2" />
         <h1 className="text-4xl font-bold">Import Data</h1>
