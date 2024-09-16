@@ -8,6 +8,7 @@ import me.gachalyfe.rapi.domain.service.SpecialInterceptionService
 import me.gachalyfe.rapi.utils.csv.CsvHandler
 import me.gachalyfe.rapi.utils.exception.CsvHandlingException
 import me.gachalyfe.rapi.utils.lazyLogger
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 
 @Component
@@ -35,7 +36,10 @@ class ManufacturerEquipmentCsvHandler(
         return data.size
     }
 
-    override fun export(): List<ManufacturerEquipment> = service.findAll()
+    override fun export(): List<ManufacturerEquipment> {
+        val sort = Sort.by("date").and(Sort.by("id"))
+        return service.findAll(sort)
+    }
 
     private fun processAnomalyDrops(data: List<ManufacturerEquipment>): List<ManufacturerEquipment> {
         var dropsFromSameDateCount = 0

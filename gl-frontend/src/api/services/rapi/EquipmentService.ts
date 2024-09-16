@@ -1,20 +1,31 @@
 import HttpFactory from '@api/HttpFactory'
-import { ApiResponse } from '@api/types'
+import { ApiResponse, PagedQuery, Pagination } from '@api/types'
 import { ManufacturerEquipment } from '@models/domain/ManufacturerEquipment'
 import { ManufacturerArms } from '@models/form/ManufacturerArms'
 
 export class EquipmentService extends HttpFactory {
-  async getRecent(): Promise<ApiResponse<ManufacturerEquipment[]>> {
+  async getAll(
+    query: PagedQuery
+  ): Promise<ApiResponse<Pagination<ManufacturerEquipment>>> {
     return await this.call({
       method: 'get',
       url: '/equipments/latest',
+      extras: {
+        query: { ...query },
+      },
     })
   }
 
-  async getArms(): Promise<ApiResponse<ManufacturerEquipment[]>> {
+  async getByType(
+    type: string,
+    query: PagedQuery
+  ): Promise<ApiResponse<Pagination<ManufacturerEquipment>>> {
     return await this.call({
       method: 'get',
-      url: '/equipments/arms/latest',
+      url: `/equipments/${type}`,
+      extras: {
+        query: { ...query },
+      },
     })
   }
 

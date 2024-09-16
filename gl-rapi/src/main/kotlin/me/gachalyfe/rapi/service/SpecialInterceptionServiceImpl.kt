@@ -2,6 +2,7 @@ package me.gachalyfe.rapi.service
 
 import me.gachalyfe.rapi.data.entity.SpecialInterceptionEntity
 import me.gachalyfe.rapi.data.repository.SpecialInterceptionRepository
+import me.gachalyfe.rapi.data.spec.SpecialInterceptionSpecs
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
 import me.gachalyfe.rapi.domain.model.SpecialInterception
@@ -31,8 +32,11 @@ class SpecialInterceptionServiceImpl(
         return data.map { it.toModel() }
     }
 
-    override fun findByDateAndEquipmentDropped(date: String): SpecialInterception? =
-        repository.findByDateAndEquipmentDropped(date)?.toModel()
+    override fun findByDateAndEquipmentDropped(date: String): SpecialInterception? {
+        val specs = SpecialInterceptionSpecs.hasDate(date).and(SpecialInterceptionSpecs.hasManufacturerEquipments())
+        val data = repository.findAll(specs).firstOrNull()
+        return data?.toModel()
+    }
 
     override fun findById(id: Long): SpecialInterception {
         val data =
@@ -41,7 +45,7 @@ class SpecialInterceptionServiceImpl(
 
         if (data.t9ManufacturerEquipment > 0) {
             val equipments =
-                equipmentService.findAllBySourceIdAndSourceType(
+                equipmentService.findBySourceIdAndSourceType(
                     sourceId = id,
                     sourceType = EquipmentSourceType.SI_DROPS,
                 )
@@ -110,7 +114,7 @@ class SpecialInterceptionServiceImpl(
 
         val equipmentIds =
             equipmentService
-                .findAllBySourceIdAndSourceType(
+                .findBySourceIdAndSourceType(
                     data.id,
                     EquipmentSourceType.SI_DROPS,
                 ).map(

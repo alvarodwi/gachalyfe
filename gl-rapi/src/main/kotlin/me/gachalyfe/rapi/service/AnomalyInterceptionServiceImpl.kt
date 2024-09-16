@@ -4,6 +4,7 @@ import me.gachalyfe.rapi.data.entity.AnomalyInterceptionEntity
 import me.gachalyfe.rapi.data.mapper.toEntity
 import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.data.repository.AnomalyInterceptionRepository
+import me.gachalyfe.rapi.data.spec.AnomalyInterceptionSpecs
 import me.gachalyfe.rapi.domain.model.AnomalyInterception
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
@@ -31,22 +32,23 @@ class AnomalyInterceptionServiceImpl(
         return data.map { it.toModel() }
     }
 
-    override fun findIdsByDateAndEquipmentDropped(date: String): List<Long> = repository.findIdsByDateAndEquipmentDropped(date)
+    override fun findIdsByDateAndEquipmentDropped(date: String): List<Long> {
+        val specs = AnomalyInterceptionSpecs.hasDate(date).and(AnomalyInterceptionSpecs.hasEquipmentDropped())
+        val data = repository.findAll(specs)
+        return data.map { it.id }
+    }
 
     override fun findById(id: Long): AnomalyInterception {
         val data =
-            repository.findByIdOrNull(id)
-                ?: throw ResourceNotFoundException("There's no such anomaly interception attempt with id=$id")
+            repository.findByIdOrNull(id) ?: throw ResourceNotFoundException("There's no such anomaly interception attempt with id=$id")
         if (data.dropped && data.bossName != "Kraken") {
             val equipment =
                 equipmentService
-                    .findAllBySourceIdAndSourceType(
+                    .findBySourceIdAndSourceType(
                         sourceId = data.id,
                         sourceType = EquipmentSourceType.AI_DROPS,
                     ).first()
-            return data
-                .toModel()
-                .copy(equipment = equipment)
+            return data.toModel().copy(equipment = equipment)
         }
 
         return data.toModel()
@@ -83,23 +85,18 @@ class AnomalyInterceptionServiceImpl(
         model: AnomalyInterception,
     ): AnomalyInterception {
         val data =
-            repository.findByIdOrNull(id)
-                ?: throw ResourceNotFoundException("There's no such anomaly interception attempt with id=$id")
-        val update =
-            model
-                .toEntity()
-                .copy(id = data.id)
+            repository.findByIdOrNull(id) ?: throw ResourceNotFoundException("There's no such anomaly interception attempt with id=$id")
+        val update = model.toEntity().copy(id = data.id)
         repository.save(update)
         return update.toModel()
     }
 
     override fun update(id: Long): Boolean {
         val data =
-            repository.findByIdOrNull(id)
-                ?: throw ResourceNotFoundException("There's no such anomaly interception attempt with id=$id")
+            repository.findByIdOrNull(id) ?: throw ResourceNotFoundException("There's no such anomaly interception attempt with id=$id")
         val equipmentIds =
             equipmentService
-                .findAllBySourceIdAndSourceType(
+                .findBySourceIdAndSourceType(
                     sourceType = EquipmentSourceType.AI_DROPS,
                     sourceId = data.id,
                 ).map(ManufacturerEquipment::id)
