@@ -27,6 +27,7 @@ export const specialInterceptionSchema = z.object({
   t9Equipment: z.number().min(0).max(6),
   modules: z.number().min(0).max(6),
   t9ManufacturerEquipment: z.number().min(0).max(6),
+  empty: z.number().min(0).max(6),
   equipments: z.array(manufacturerEquipmentSchema).optional(),
 })
 
@@ -38,6 +39,16 @@ export const bannerGachaSchema = z.object({
   totalAttempt: z.number().min(1).max(999),
   totalSSR: z.number().min(0).max(99),
   nikkePulled: z.array(nikkeItemSchema),
+})
+
+export const bannerGachaImportSchema = z.object({
+  date: z.string().date('must be a valid date'),
+  pickUpName: z.string().min(1, 'must not be empty'),
+  gemsUsed: z.number().min(0).max(99999),
+  ticketUsed: z.number().min(0).max(999),
+  totalAttempt: z.number().min(1).max(999),
+  totalSSR: z.number().min(0).max(99),
+  nikkePulled: z.string().nullable(),
 })
 
 const moldType = [
@@ -57,10 +68,28 @@ export const moldGachaSchema = z.object({
   nikkePulled: z.array(nikkeItemSchema),
 })
 
+export const moldGachaImportSchema = z.object({
+  date: z.string().date('must be a valid date'),
+  type: z.enum(moldType),
+  amount: z.number().min(1).max(999),
+  totalSSR: z.number().min(0).max(99),
+  nikkePulled: z.string().nullable(),
+})
+
 export const importCsvSchema = z.object({
   file: z
     .any()
     .refine((file?: File) => file != undefined, 'file must not be empty'),
   target: z.string().min(1, 'must not be empty'),
   isValid: z.boolean(),
+})
+
+const equipmentSourceType = ['SI_DROPS', 'AI_DROPS', 'FURNACE', 'ARMS'] as const
+
+export const equipmentSchema = z.object({
+  date: z.string().date('must be a valid date'),
+  sourceType: z.enum(equipmentSourceType),
+  manufacturer: z.string().min(1, 'must not be empty'),
+  classType: z.string().min(1, 'must not be empty'),
+  slotType: z.string().min(1, 'must not be empty'),
 })

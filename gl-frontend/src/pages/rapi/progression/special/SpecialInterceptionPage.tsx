@@ -192,6 +192,23 @@ export default function SpecialInterceptionPage() {
                 ))}
               </select>
             </div>
+            <div className="w-auto">
+              <label htmlFor="empty" className="block text-sm">
+                Empty
+              </label>
+              <select
+                {...register('empty', {
+                  valueAsNumber: true,
+                })}
+                className="disabled mt-1 w-full border-black"
+              >
+                {[...Array(7)].map((_, i) => (
+                  <option key={i} value={i}>
+                    {i}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           {equipmentCount > 0 && (
             <div className="flex h-full flex-col">
