@@ -171,7 +171,7 @@ export default function CsvImportPage() {
   }, [file, csvSchema, schemaKeys])
 
   async function onSubmit(data: FormData) {
-    const response = await api.importFile(data)
+    const response = await api.importFile(data.file, data.target)
     if (response.status == 200) {
       alert(response.message)
     } else {
@@ -255,44 +255,46 @@ export default function CsvImportPage() {
 
           {file && (
             <div className="flex flex-col gap-2">
-              <hr />
               <p className="text-xs">
-                Previewing {file.name} [
+                File: {file.name} [
                 <span className="text-color-red">
                   {readableFileSize(file.size)}
                 </span>
                 ]
               </p>
-              <p className="text-xs">
-                There are {tableValues.length} entries ready to be imported,
-                here's the preview of it
-              </p>
               {tableValues && tableValues.length > 0 && (
-                <table className="divide-x-none w-fit divide-y-2 divide-solid divide-gray-200 text-sm">
-                  <thead className="text-left font-medium">
-                    <tr>
-                      {Object.keys(tableValues[0]).map((key, i) => (
-                        <th key={i} className="whitespace-nowrap px-4 py-2">
-                          {key}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {tableValues?.slice(0, 6).map((value, i) => (
-                      <tr key={i}>
-                        {Object.keys(value).map((key, j) => (
-                          <td
-                            key={j}
-                            className="whitespace-nowrap px-4 py-2 text-center"
-                          >
-                            {value[key] ?? 'hehe'}
-                          </td>
+                <>
+                  <hr />
+                  <p className="text-xs">
+                    There are {tableValues.length} entries ready to be imported,
+                    here's the preview of it
+                  </p>
+                  <table className="divide-x-none w-fit divide-y-2 divide-solid divide-gray-200 text-sm">
+                    <thead className="text-left font-medium">
+                      <tr>
+                        {Object.keys(tableValues[0]).map((key, i) => (
+                          <th key={i} className="whitespace-nowrap px-4 py-2">
+                            {key}
+                          </th>
                         ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {tableValues?.slice(0, 6).map((value, i) => (
+                        <tr key={i}>
+                          {Object.keys(value).map((key, j) => (
+                            <td
+                              key={j}
+                              className="whitespace-nowrap px-4 py-2 text-center"
+                            >
+                              {value[key] ?? 'hehe'}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
               )}
               <hr />
             </div>
@@ -314,7 +316,7 @@ export default function CsvImportPage() {
               </div>
 
               <div className="flex flex-col">
-                <strong className="font-medium">Is Valid .csv format</strong>
+                <strong className="font-medium">Is a Valid .csv format</strong>
                 <i className="text-xs">
                   Automatically checked from csv files...
                 </i>

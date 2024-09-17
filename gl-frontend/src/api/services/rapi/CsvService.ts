@@ -1,13 +1,15 @@
 import HttpFactory from '@api/HttpFactory'
 import { ApiResponse } from '@api/types'
-import { ImporterFile } from '@models/domain/ImporterFile'
 
 export default class CsvService extends HttpFactory {
-  async importFile(data: ImporterFile): Promise<ApiResponse<boolean>> {
-    if (!data.file) throw new Error('file is undefined')
+  async importFile(
+    file: File | undefined,
+    target: string
+  ): Promise<ApiResponse<boolean>> {
+    if (!file) throw new Error('file is undefined')
     const body = new FormData()
-    body.append('file', data.file)
-    body.append('target', data.target)
+    body.append('file', file)
+    body.append('target', target)
 
     return await this.call({
       method: 'post',
