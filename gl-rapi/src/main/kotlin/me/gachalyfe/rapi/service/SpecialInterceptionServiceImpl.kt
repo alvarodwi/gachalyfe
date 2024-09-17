@@ -145,7 +145,7 @@ class SpecialInterceptionServiceImpl(
             totalManufacturerEquipments = totalManufacturerEquipments,
             totalModules = totalModules,
             totalEmptyDrops = totalEmptyDrops,
-            totalManufacturerArms = totalManufacturerArms
+            totalManufacturerArms = totalManufacturerArms,
         )
     }
 }

@@ -93,27 +93,30 @@ class ManufacturerEquipmentServiceImpl(
 
     override fun generateStats(sourceType: EquipmentSourceType): EquipmentStats {
         val spec = ManufacturerEquipmentSpecs.hasSourceType(sourceType)
-        val data = when (sourceType) {
-            EquipmentSourceType.UNKNOWN -> repository.findAll()
-            else -> repository.findAll(spec)
-        }
-
-        val equipmentStatsByCategory: List<EquipmentStatsByCategory> = data.groupingBy {
-            Triple(it.manufacturer, it.classType, it.slotType)
-        }.eachCount()
-            .map { (key, count) ->
-                EquipmentStatsByCategory(
-                    manufacturer = key.first,
-                    classType = key.second,
-                    slotType = key.third,
-                    total = count
-                )
+        val data =
+            when (sourceType) {
+                EquipmentSourceType.UNKNOWN -> repository.findAll()
+                else -> repository.findAll(spec)
             }
+
+        val equipmentStatsByCategory: List<EquipmentStatsByCategory> =
+            data
+                .groupingBy {
+                    Triple(it.manufacturer, it.classType, it.slotType)
+                }.eachCount()
+                .map { (key, count) ->
+                    EquipmentStatsByCategory(
+                        manufacturer = key.first,
+                        classType = key.second,
+                        slotType = key.third,
+                        total = count,
+                    )
+                }
 
         return EquipmentStats(
             sourceType = sourceType,
             equipmentStatsByCategory = equipmentStatsByCategory,
-            total = data.size
+            total = data.size,
         )
     }
 
@@ -124,7 +127,7 @@ class ManufacturerEquipmentServiceImpl(
             totalManufacturerArmsOpened = totalCounts.getOrDefault(EquipmentSourceType.ARMS.ordinal, 0),
             totalManufacturerFurnaceOpened = totalCounts.getOrDefault(EquipmentSourceType.FURNACE.ordinal, 0),
             totalFromAnomalyInterception = totalCounts.getOrDefault(EquipmentSourceType.AI_DROPS.ordinal, 0),
-            totalFromSpecialInterception = totalCounts.getOrDefault(EquipmentSourceType.SI_DROPS.ordinal, 0)
+            totalFromSpecialInterception = totalCounts.getOrDefault(EquipmentSourceType.SI_DROPS.ordinal, 0),
         )
     }
 }

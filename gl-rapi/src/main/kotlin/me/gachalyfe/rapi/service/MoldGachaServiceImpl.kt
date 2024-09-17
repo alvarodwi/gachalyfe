@@ -4,6 +4,8 @@ import me.gachalyfe.rapi.data.mapper.toEntity
 import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.data.repository.MoldGachaRepository
 import me.gachalyfe.rapi.domain.model.MoldGacha
+import me.gachalyfe.rapi.domain.model.MoldType
+import me.gachalyfe.rapi.domain.model.stats.MoldGachaStats
 import me.gachalyfe.rapi.domain.service.MoldGachaService
 import me.gachalyfe.rapi.domain.service.NikkeService
 import me.gachalyfe.rapi.utils.equalsIgnoreOrder
@@ -81,5 +83,19 @@ class MoldGachaServiceImpl(
         val data = repository.findByIdOrNull(id) ?: throw ResourceNotFoundException("There's no such banner gacha pull with id=$id")
         repository.deleteById(data.id)
         return true
+    }
+
+    override fun generateStats(): List<MoldGachaStats> {
+        val data = repository.findAll()
+
+        val stats: List<MoldGachaStats> =
+            data.groupBy { it.type }.map { (type, data) ->
+                MoldGachaStats(
+                    moldType = MoldType.entries[type],
+                    amount = data.sumOf { it.amount },
+                    totalSSR = data.sumOf { it.totalSSR },
+                )
+            }
+        return stats
     }
 }

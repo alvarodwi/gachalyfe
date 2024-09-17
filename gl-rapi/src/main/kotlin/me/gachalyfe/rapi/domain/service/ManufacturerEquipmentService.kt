@@ -34,7 +34,7 @@ interface ManufacturerEquipmentService {
 
     fun delete(id: Long): Boolean
 
-    fun generateStats(sourceType: EquipmentSourceType) : EquipmentStats
+    fun generateStats(sourceType: EquipmentSourceType): EquipmentStats
 
-    fun generateSourceStats() : EquipmentSourceStats
+    fun generateSourceStats(): EquipmentSourceStats
 }

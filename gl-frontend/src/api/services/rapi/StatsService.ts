@@ -1,8 +1,10 @@
 import HttpFactory from '@api/HttpFactory'
 import { ApiResponse } from '@api/types'
 import { AnomalyInterceptionStats } from '@models/domain/stats/AnomalyInterceptionStats'
+import { BannerGachaStats } from '@models/domain/stats/BannerGachaStats'
 import { EquipmentSourceStats } from '@models/domain/stats/EquipmentSourceStats'
 import { EquipmentStats } from '@models/domain/stats/EquipmentStats'
+import { MoldGachaStats } from '@models/domain/stats/MoldGachaStats'
 import { SpecialInterceptionStats } from '@models/domain/stats/SpecialInterceptionStats'
 
 export default class StatsService extends HttpFactory {
@@ -46,6 +48,20 @@ export default class StatsService extends HttpFactory {
     return await this.call({
       method: 'get',
       url: '/equipments/stats/source',
+    })
+  }
+
+  async getBannerGachaStats(): Promise<ApiResponse<BannerGachaStats[]>> {
+    return await this.call({
+      method: 'get',
+      url: '/gacha/banner/stats',
+    })
+  }
+
+  async getMoldGachaStats(): Promise<ApiResponse<MoldGachaStats[]>> {
+    return await this.call({
+      method: 'get',
+      url: '/gacha/mold/stats',
     })
   }
 }

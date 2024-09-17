@@ -4,5 +4,5 @@ data class EquipmentStatsByCategory(
     val manufacturer: String,
     val classType: String,
     val slotType: String,
-    val total: Int
+    val total: Int,
 )

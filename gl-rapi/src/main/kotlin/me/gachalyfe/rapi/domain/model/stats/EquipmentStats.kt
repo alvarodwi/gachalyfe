@@ -7,4 +7,3 @@ data class EquipmentStats(
     val equipmentStatsByCategory: List<EquipmentStatsByCategory>,
     val total: Int,
 )
-

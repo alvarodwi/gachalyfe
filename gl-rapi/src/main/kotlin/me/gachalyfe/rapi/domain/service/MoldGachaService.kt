@@ -1,6 +1,7 @@
 package me.gachalyfe.rapi.domain.service
 
 import me.gachalyfe.rapi.domain.model.MoldGacha
+import me.gachalyfe.rapi.domain.model.stats.MoldGachaStats
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -22,4 +23,6 @@ interface MoldGachaService {
     fun saveAll(data: List<MoldGacha>): Int
 
     fun delete(id: Long): Boolean
+
+    fun generateStats(): List<MoldGachaStats>
 }

@@ -8,6 +8,7 @@ import me.gachalyfe.rapi.controller.dto.BannerGachaDTO
 import me.gachalyfe.rapi.controller.toPagination
 import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.domain.model.BannerGacha
+import me.gachalyfe.rapi.domain.model.stats.BannerGachaStats
 import me.gachalyfe.rapi.domain.service.BannerGachaService
 import me.gachalyfe.rapi.utils.lazyLogger
 import org.springframework.data.domain.PageRequest
@@ -55,6 +56,17 @@ class BannerGachaController(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
                 data = data.toPagination(),
+            )
+        return response.buildResponse()
+    }
+
+    @GetMapping("stats")
+    fun getBannerGachaStats(): ResponseEntity<ApiResponse<List<BannerGachaStats>>> {
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.OK.value(),
+                message = "Stats retrieved successfully",
+                data = service.generateStats(),
             )
         return response.buildResponse()
     }

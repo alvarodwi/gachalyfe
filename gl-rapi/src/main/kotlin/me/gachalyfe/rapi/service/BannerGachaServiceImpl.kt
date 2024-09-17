@@ -5,6 +5,7 @@ import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.data.repository.BannerGachaRepository
 import me.gachalyfe.rapi.data.spec.BannerGachaSpecs
 import me.gachalyfe.rapi.domain.model.BannerGacha
+import me.gachalyfe.rapi.domain.model.stats.BannerGachaStats
 import me.gachalyfe.rapi.domain.service.BannerGachaService
 import me.gachalyfe.rapi.domain.service.NikkeService
 import me.gachalyfe.rapi.utils.equalsIgnoreOrder
@@ -97,5 +98,45 @@ class BannerGachaServiceImpl(
         val data = repository.findByIdOrNull(id) ?: throw ResourceNotFoundException("There's no such banner gacha pull with id=$id")
         repository.deleteById(data.id)
         return true
+    }
+
+    override fun generateStats(): List<BannerGachaStats> {
+        val data = repository.findAll()
+        val groupedData = data.groupBy { it.pickUpName }
+
+        val socialPulls = groupedData["Social"].orEmpty()
+        val regularPulls = groupedData["Regular"].orEmpty()
+        val eventPulls = groupedData.filterKeys { it !in listOf("Social", "Regular") }.values.flatten()
+
+        return listOf(
+            BannerGachaStats(
+                category = "Social",
+                totalGemsUsed = 0,
+                totalTicketUsed = 0,
+                totalAttempts = socialPulls.sumOf { it.totalAttempt },
+                totalSSR = socialPulls.sumOf { it.totalSSR },
+            ),
+            BannerGachaStats(
+                category = "Regular",
+                totalGemsUsed = regularPulls.sumOf { it.gemsUsed },
+                totalTicketUsed = regularPulls.sumOf { it.ticketUsed },
+                totalAttempts = regularPulls.sumOf { it.totalAttempt },
+                totalSSR = regularPulls.sumOf { it.totalSSR },
+            ),
+            BannerGachaStats(
+                category = "Event",
+                totalGemsUsed = eventPulls.sumOf { it.gemsUsed },
+                totalTicketUsed = eventPulls.sumOf { it.ticketUsed },
+                totalAttempts = eventPulls.sumOf { it.totalAttempt },
+                totalSSR = eventPulls.sumOf { it.totalSSR },
+            ),
+            BannerGachaStats(
+                category = "All",
+                totalGemsUsed = data.sumOf { it.gemsUsed },
+                totalTicketUsed = data.sumOf { it.ticketUsed },
+                totalAttempts = data.sumOf { it.totalAttempt },
+                totalSSR = data.sumOf { it.totalSSR }
+            )
+        )
     }
 }

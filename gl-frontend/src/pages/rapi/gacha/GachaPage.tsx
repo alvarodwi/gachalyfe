@@ -1,7 +1,62 @@
+import useApi from '@api/services/rapi'
 import Breadcrumb from '@components/Breadcrumb'
+import { BannerGachaStats } from '@models/domain/stats/BannerGachaStats'
+import { MoldGachaStats } from '@models/domain/stats/MoldGachaStats'
+import { capitalize, round } from 'lodash'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 export default function GachaPage() {
+  const api = useApi().stats
+
+  const [bannerGachaStats, setBannerGachaStats] = useState<BannerGachaStats[]>(
+    []
+  )
+  const [moldGachaStats, setMoldGachaStats] = useState<MoldGachaStats[]>([])
+
+  const moldTypes = [
+    'PURPLE',
+    'YELLOW',
+    'ELYSION',
+    'MISSILIS',
+    'TETRA',
+    'PILGRIM',
+  ]
+
+  async function fetchBannerGachaStats() {
+    const response = await api.getBannerGachaStats()
+    if (response.status == 200) {
+      setBannerGachaStats(response.data ?? [])
+    } else {
+      console.error(response.message)
+    }
+  }
+
+  async function fetchMoldGachaStats() {
+    const response = await api.getMoldGachaStats()
+    if (response.status == 200) {
+      setMoldGachaStats(response.data ?? [])
+    } else {
+      console.error(response.message)
+    }
+  }
+
+  function fetchStats() {
+    fetchBannerGachaStats()
+    fetchMoldGachaStats()
+  }
+
+  useEffect(() => {
+    fetchStats()
+
+    console.log(
+      moldGachaStats.sort((a, b) => {
+        return moldTypes.indexOf(a.moldType) - moldTypes.indexOf(b.moldType)
+      })
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <main className="bg-gray-1 flex min-h-screen w-full font-serif">
       <div
@@ -11,56 +66,7 @@ export default function GachaPage() {
         <Breadcrumb className="my-2" />
         <h1 className="text-4xl font-bold">Gacha</h1>
 
-        <h2 className="mt-4 text-xl font-semibold">Pull stats</h2>
-        <table id="account-info" className="w-3/8 mt-2 table-auto items-center">
-          <thead>
-            <tr>
-              <td>Banner</td>
-              <td>Count</td>
-              <td>SSR</td>
-              <td>%</td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr id="gacha-social-banner">
-              <td>Social</td>
-              <td className="text-end">0</td>
-              <td className="text-end">0</td>
-              <td className="text-end">0%</td>
-            </tr>
-            <tr id="gacha-regular-banner">
-              <td>Regular</td>
-              <td className="text-end">0</td>
-              <td className="text-end">0</td>
-              <td className="text-end">0%</td>
-            </tr>
-            <tr id="gacha-limited-banner">
-              <td>Event</td>
-              <td className="text-end">0</td>
-              <td className="text-end">0</td>
-              <td className="text-end">0%</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <table>
-          <thead>
-            <tr>
-              <td>Mold Type</td>
-              <td>Opened</td>
-              <td>SSR</td>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Purple</td>
-              <td>0</td>
-              <td>0</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h2 className="mt-4 text-xl font-semibold">Sub Menu</h2>
+        <h2 className="mt-4 text-lg font-semibold">Sub Menu</h2>
 
         <div className="mt-4 flex w-full flex-row flex-wrap justify-start gap-4 text-center">
           <Link
@@ -92,6 +98,120 @@ export default function GachaPage() {
             <span className="mt-1 text-lg font-bold">Molds</span>
           </Link>
         </div>
+
+        <h2 className="mt-4 text-lg font-semibold">Pull stats</h2>
+        <table className="mt-2 w-fit">
+          <thead className="text-center text-sm">
+            <tr>
+              <td rowSpan={2} className="border border-black p-1 font-bold">
+                Category
+              </td>
+              <td className="border border-black p-1 font-bold" colSpan={3}>
+                Resource Used
+              </td>
+              <td rowSpan={2} className="border border-black p-1 font-bold">
+                Total Attempts
+              </td>
+              <td rowSpan={2} className="border border-black p-1 font-bold">
+                Total SSR
+              </td>
+              <td rowSpan={2} className="border border-black p-1 font-bold">
+                %
+              </td>
+            </tr>
+            <tr>
+              <td className="border border-black p-1 text-sm font-semibold">
+                Social Points
+              </td>
+              <td className="border border-black p-1 text-sm font-semibold">
+                Gems
+              </td>
+              <td className="border border-black p-1 text-sm font-semibold">
+                Ticket
+              </td>
+            </tr>
+          </thead>
+          <tbody>
+            {bannerGachaStats.length > 0 &&
+              bannerGachaStats.map((stats) => (
+                <tr key={stats.category}>
+                  <td className="border border-black p-3">{stats.category}</td>
+                  <td className="border border-black p-3 text-end">
+                    {['Social', 'All'].includes(stats.category)
+                      ? bannerGachaStats.find((i) => i.category == 'Social')
+                          ?.totalAttempts
+                      : 0}
+                  </td>
+                  <td className="border border-black p-3 text-end">
+                    {stats.category != 'Social' ? stats.totalGemsUsed : 0}
+                  </td>
+                  <td className="border border-black p-3 text-end">
+                    {stats.category != 'Social' ? stats.totalTicketUsed : 0}
+                  </td>
+                  <td className="border border-black p-3 text-end">
+                    {stats.totalAttempts}
+                  </td>
+                  <td className="border border-black p-3 text-end">
+                    {stats.totalSSR}
+                  </td>
+                  <td className="whitespace-nowrap border border-black p-3 text-end">
+                    {round(
+                      (stats.totalSSR / stats.totalAttempts) * 100,
+                      2
+                    ).toFixed(2)}
+                    %
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+
+        <h2 className="mt-4 text-lg font-semibold">Mold stats</h2>
+        <table className="mt-2 w-fit">
+          <thead className="text-center text-sm">
+            <tr>
+              <td className="border border-black p-1 font-bold">Mold Type</td>
+              <td rowSpan={2} className="border border-black p-1 font-bold">
+                Amount
+              </td>
+              <td rowSpan={2} className="border border-black p-1 font-bold">
+                Total SSR
+              </td>
+              <td rowSpan={2} className="border border-black p-1 font-bold">
+                %
+              </td>
+            </tr>
+          </thead>
+          <tbody>
+            {moldGachaStats.length > 0 &&
+              moldGachaStats
+                .sort((a, b) => {
+                  return (
+                    moldTypes.indexOf(a.moldType) -
+                    moldTypes.indexOf(b.moldType)
+                  )
+                })
+                .map((stats) => (
+                  <tr key={stats.moldType}>
+                    <td className="border border-black p-3">
+                      {capitalize(stats.moldType)}
+                    </td>
+                    <td className="border border-black p-3 text-end">
+                      {stats.amount}
+                    </td>
+                    <td className="border border-black p-3 text-end">
+                      {stats.totalSSR}
+                    </td>
+                    <td className="whitespace-nowrap border border-black p-3 text-end">
+                      {round((stats.totalSSR / stats.amount) * 100, 2).toFixed(
+                        2
+                      )}
+                      %
+                    </td>
+                  </tr>
+                ))}
+          </tbody>
+        </table>
       </div>
     </main>
   )
