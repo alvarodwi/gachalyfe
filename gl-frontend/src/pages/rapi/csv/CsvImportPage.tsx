@@ -287,7 +287,7 @@ export default function CsvImportPage() {
                               key={j}
                               className="whitespace-nowrap px-4 py-2 text-center"
                             >
-                              {value[key] ?? 'hehe'}
+                              {value[key]}
                             </td>
                           ))}
                         </tr>
