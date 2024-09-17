@@ -6,6 +6,7 @@ import { EquipmentService } from './EquipmentService'
 import { NikkeService } from './NikkeService'
 import { GachaService as BannerGachaService } from './GachaService'
 import MoldGachaService from './MoldGachaService'
+import StatsService from './StatsService'
 
 interface ServiceInstance {
   anomaly: AnomalyInterceptionService
@@ -15,6 +16,7 @@ interface ServiceInstance {
   banners: BannerGachaService
   molds: MoldGachaService
   csv: CsvService
+  stats: StatsService
 }
 
 export default function useApi() {
@@ -31,6 +33,7 @@ export default function useApi() {
     banners: new BannerGachaService(apiFetcher),
     molds: new MoldGachaService(apiFetcher),
     csv: new CsvService(apiFetcher),
+    stats: new StatsService(apiFetcher),
   }
 
   return instances

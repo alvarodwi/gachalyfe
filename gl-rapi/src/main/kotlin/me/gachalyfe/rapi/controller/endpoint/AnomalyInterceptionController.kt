@@ -8,6 +8,7 @@ import me.gachalyfe.rapi.controller.dto.AnomalyInterceptionDTO
 import me.gachalyfe.rapi.controller.toPagination
 import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.domain.model.AnomalyInterception
+import me.gachalyfe.rapi.domain.model.stats.AnomalyInterceptionStats
 import me.gachalyfe.rapi.domain.service.AnomalyInterceptionService
 import me.gachalyfe.rapi.utils.lazyLogger
 import org.springframework.data.domain.PageRequest
@@ -50,6 +51,19 @@ class AnomalyInterceptionController(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
                 data = service.findAll(pageable).toPagination(),
+            )
+        return response.buildResponse()
+    }
+
+    @GetMapping("stats")
+    fun getAnomalyInterceptionStats(
+        @RequestParam("dropType") dropType: String,
+    ): ResponseEntity<ApiResponse<AnomalyInterceptionStats>> {
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.OK.value(),
+                message = "Stats retrieved successfully",
+                data = service.generateStats(dropType),
             )
         return response.buildResponse()
     }
@@ -104,7 +118,7 @@ class AnomalyInterceptionController(
             ApiResponse.Success(
                 status = HttpStatus.ACCEPTED.value(),
                 message = "Data deleted successfully",
-                data = service.update(id),
+                data = service.delete(id),
             )
         log.info("Deleted anomaly interception attempt with id $id")
         return response.buildResponse()
