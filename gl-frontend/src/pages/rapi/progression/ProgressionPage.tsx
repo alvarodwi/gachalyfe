@@ -119,8 +119,27 @@ export default function ProgressionPage() {
           </tr>
         </table>
 
+        <h2 className="mt-4 text-lg font-semibold">Sub Menus</h2>
+
+        <div className="mt-4 flex w-full flex-row flex-wrap justify-start gap-4 text-center">
+          <Link
+            to={'anomaly'}
+            className="flex h-auto w-fit flex-col items-center justify-center border border-black px-8 py-4"
+            hover="bg-gray-200"
+          >
+            <span className="mt-1 text-lg font-bold">Anomaly Interception</span>
+          </Link>
+          <Link
+            to={'special'}
+            className="flex h-auto w-fit flex-col items-center justify-center border border-black px-8 py-4"
+            hover="bg-gray-200"
+          >
+            <span className="mt-1 text-lg font-bold">Special Interception</span>
+          </Link>
+        </div>
+
         <h2 className="mt-4 text-lg font-semibold">Total Drops</h2>
-        <table id="drops-info" className="mt-2 w-auto table-fixed divide-black">
+        <table className="mt-2 w-auto table-fixed divide-black">
           <thead className="text-center font-bold">
             <tr>
               <td className="border border-black px-2 py-2">
@@ -136,7 +155,13 @@ export default function ProgressionPage() {
           <tbody className="text-center text-lg">
             <tr>
               <td className="border border-black px-2 py-2">
-                {accountInfo.equipmentsDropped}
+                <Link
+                  className="flex w-full flex-row items-center justify-center gap-2"
+                  to={'../inventory'}
+                >
+                  {accountInfo.equipmentsDropped}
+                  <span className="i-tabler-link" />
+                </Link>
               </td>
               <td className="border border-black px-2 py-2">
                 {accountInfo.modulesDropped}
@@ -158,73 +183,64 @@ export default function ProgressionPage() {
           </tbody>
         </table>
 
-        <h2 className="mt-4 text-lg font-semibold">Sub Menus</h2>
-
-        <div className="mt-4 flex w-full flex-row flex-wrap justify-start gap-4 text-center">
-          <Link
-            to={'anomaly'}
-            className="flex h-auto w-fit flex-col items-center justify-center border border-black px-8 py-4"
-            hover="bg-gray-200"
-          >
-            <span className="mt-1 text-lg font-bold">Anomaly Interception</span>
-          </Link>
-          <Link
-            to={'special'}
-            className="flex h-auto w-fit flex-col items-center justify-center border border-black px-8 py-4"
-            hover="bg-gray-200"
-          >
-            <span className="mt-1 text-lg font-bold">Special Interception</span>
-          </Link>
-        </div>
-
-        <h2 className="mt-4 text-xl font-bold">Stats</h2>
-        <div className="flex flex-row flex-wrap gap-8">
-          <div className="flex flex-col" id="anomaly-interception-stats">
-            <h3 className="text-lg font-medium">Anomaly Interception</h3>
-            {anomalyInterceptionStats && (
-              <div className="flex flex-col gap-1 text-sm">
-                {Object.keys(anomalyInterceptionStats)
+        <h2 className="mt-4 text-lg font-semibold">Stats</h2>
+        <div className="mt-2 flex flex-row gap-4">
+          <table>
+            <thead className="text-center">
+              <tr>
+                <td colSpan={2} className="border border-black p-1 font-bold">
+                  Anomaly Interception
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              {anomalyInterceptionStats &&
+                Object.keys(anomalyInterceptionStats)
                   .slice(1)
                   .map((k) => (
-                    <div key={k} className="flex flex-row">
-                      <span className="mr-2 font-medium">{startCase(k)}</span>
-                      <span className="grow text-end">
+                    <tr key={k} className="text-sm">
+                      <td className="mr-2 border border-black p-1 font-medium">
+                        {startCase(k)}
+                      </td>
+                      <td className="mr-2 border border-black p-1 text-end font-medium">
                         {
                           anomalyInterceptionStats[
                             k as keyof AnomalyInterceptionStats
                           ]
                         }
-                      </span>
-                    </div>
+                      </td>
+                    </tr>
                   ))}
-              </div>
-            )}
-          </div>
-
-          <div
-            className="flex flex-col border-l border-black pl-2"
-            id="special-interception-stats"
-          >
-            <h3 className="text-lg font-medium">Special Interception</h3>
-            {specialInterceptionStats && (
-              <div className="flex flex-col gap-1 text-sm">
-                {Object.keys(specialInterceptionStats)
+            </tbody>
+          </table>
+          <table>
+            <thead className="text-center">
+              <tr>
+                <td colSpan={2} className="border border-black p-1 font-bold">
+                  Special Interception
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              {specialInterceptionStats &&
+                Object.keys(specialInterceptionStats)
                   .slice(1)
                   .map((k) => (
-                    <div key={k} className="flex flex-row">
-                      <span className="mr-2 font-medium">{startCase(k)}</span>
-                      <span className="grow text-end">
+                    <tr key={k} className="text-sm">
+                      <td className="mr-2 border border-black p-1 font-medium">
+                        {startCase(k)}
+                      </td>
+                      <td className="mr-2 border border-black p-1 text-end font-medium">
                         {
                           specialInterceptionStats[
                             k as keyof SpecialInterceptionStats
                           ]
                         }
-                      </span>
-                    </div>
+                      </td>
+                    </tr>
                   ))}
-              </div>
-            )}
-          </div>
+            </tbody>
+          </table>
         </div>
       </div>
     </main>

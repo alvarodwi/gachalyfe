@@ -15,7 +15,7 @@ export default function EquipmentStatsTable(props: Props) {
     <table className="table-auto text-sm">
       <thead>
         <tr>
-          <th className="p-2" colSpan={2} />
+          <th className="border border-black p-2" colSpan={2} />
           {slotTypes.map((slotType) => (
             <th key={slotType} className="border border-black p-2">
               {slotType}

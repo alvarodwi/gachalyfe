@@ -50,13 +50,29 @@ export default function InventoryPage() {
         <Breadcrumb className="my-2" />
         <h1 className="text-4xl font-bold">Inventory</h1>
 
+        <h2 className="mt-4 text-lg font-semibold">Sub Menus</h2>
+
+        <div className="mt-4 flex w-full flex-row flex-wrap justify-start gap-4 text-center">
+          <Link
+            to={'arms'}
+            className="flex h-auto w-fit flex-col items-center justify-center border border-black px-8 py-4"
+            hover="bg-gray-200"
+          >
+            <span className="mt-1 text-lg font-bold">Manufacturer Arms</span>
+          </Link>
+          <Link
+            to={'furnace'}
+            className="flex h-auto w-fit flex-col items-center justify-center border border-black px-8 py-4"
+            hover="bg-gray-200"
+          >
+            <span className="mt-1 text-lg font-bold">Manufacturer Furnace</span>
+          </Link>
+        </div>
+
         {equipmentSourceStats && (
           <>
             <h2 className="mt-4 text-lg font-semibold">Equipments source</h2>
-            <table
-              id="drops-info"
-              className="mt-2 w-auto table-fixed divide-black"
-            >
+            <table className="mt-2 w-auto table-fixed divide-black">
               <thead className="text-center font-bold">
                 <tr>
                   <td className="border border-black p-2">
@@ -91,26 +107,7 @@ export default function InventoryPage() {
           </>
         )}
 
-        <h2 className="mt-4 text-lg font-semibold">Sub Menus</h2>
-
-        <div className="mt-4 flex w-full flex-row flex-wrap justify-start gap-4 text-center">
-          <Link
-            to={'arms'}
-            className="flex h-auto w-fit flex-col items-center justify-center border border-black px-8 py-4"
-            hover="bg-gray-200"
-          >
-            <span className="mt-1 text-lg font-bold">Manufacturer Arms</span>
-          </Link>
-          <Link
-            to={'furnace'}
-            className="flex h-auto w-fit flex-col items-center justify-center border border-black px-8 py-4"
-            hover="bg-gray-200"
-          >
-            <span className="mt-1 text-lg font-bold">Manufacturer Furnace</span>
-          </Link>
-        </div>
-
-        <h2 className="mb-2 mt-4 text-xl font-bold">Equipment Stats</h2>
+        <h2 className="mb-2 mt-4 text-lg font-semibold">Equipment Stats</h2>
         {equipmentStats && <EquipmentStatsTable data={equipmentStats} />}
       </div>
     </main>
