@@ -1,8 +1,11 @@
 import useApi from '@api/services/rapi'
 import Breadcrumb from '@components/Breadcrumb'
+import FormErrorList from '@components/form/FormErrorList'
 import NikkeSelector from '@components/input/NikkeSelector'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { MoldGacha } from '@models/domain/MoldGacha'
 import { NikkeItem } from '@models/domain/Nikke'
+import { moldGachaSchema } from '@utils/validation/schema'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -11,7 +14,24 @@ export default function MoldGachaPage() {
   const api = useApi().molds
   const [result, setResult] = useState<MoldGacha[]>()
 
-  const { register, handleSubmit, watch, setValue } = useForm<MoldGacha>({
+  const formSchema = moldGachaSchema
+    .refine((data) => data.totalSSR <= data.amount, {
+      message: 'total ssr must be less than or equal to amount opened',
+      path: ['totalSSR'],
+    })
+    .refine((data) => data.nikkePulled.length == data.totalSSR, {
+      message: 'nikke pulled must be same with total ssr',
+      path: ['nikkePulled'],
+    })
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<MoldGacha>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       date: dayjs().format('YYYY-MM-DD'),
       nikkePulled: [],
@@ -98,7 +118,7 @@ export default function MoldGachaPage() {
                 defaultValue={0}
                 min={0}
                 max={999}
-                {...register('amount')}
+                {...register('amount', { valueAsNumber: true })}
               />
             </div>
             <div className="w-auto">
@@ -111,7 +131,7 @@ export default function MoldGachaPage() {
                 defaultValue={0}
                 min={0}
                 max={99}
-                {...register('totalSSR')}
+                {...register('totalSSR', { valueAsNumber: true })}
               />
             </div>
           </div>
@@ -130,6 +150,8 @@ export default function MoldGachaPage() {
           <button className="mt-4 w-full cursor-pointer border-2 border-black py-2 text-xl font-bold">
             Submit
           </button>
+
+          <FormErrorList errors={errors} />
         </form>
       </div>
       <div

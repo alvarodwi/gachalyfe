@@ -2,22 +2,28 @@ import useApi from '@api/services/rapi'
 import Breadcrumb from '@components/Breadcrumb'
 import { SpecialInterception } from '@models/domain/SpecialInterception'
 import { useEffect, useState } from 'react'
-import { schema } from './validation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import dayjs from 'dayjs'
 import ManufacturerEquipmentForm from '@components/input/ManufacturerEquipmentForm'
 import { ManufacturerEquipment } from '@models/domain/ManufacturerEquipment'
+import { specialInterceptionSchema } from '@utils/validation/schema'
+import FormErrorList from '@components/form/FormErrorList'
 
 export default function SpecialInterceptionPage() {
   const api = useApi().special
   const [attempts, setAttempts] = useState<SpecialInterception[]>()
   const [equipmentCount, setEquipmentCount] = useState<number>(0)
 
-  const { register, handleSubmit, watch, setValue } =
-    useForm<SpecialInterception>({
-      resolver: zodResolver(schema),
-    })
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<SpecialInterception>({
+    resolver: zodResolver(specialInterceptionSchema),
+  })
 
   const date = watch('date')
   const bossName = watch('bossName')
@@ -186,6 +192,23 @@ export default function SpecialInterceptionPage() {
                 ))}
               </select>
             </div>
+            <div className="w-auto">
+              <label htmlFor="empty" className="block text-sm">
+                Empty
+              </label>
+              <select
+                {...register('empty', {
+                  valueAsNumber: true,
+                })}
+                className="disabled mt-1 w-full border-black"
+              >
+                {[...Array(7)].map((_, i) => (
+                  <option key={i} value={i}>
+                    {i}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           {equipmentCount > 0 && (
             <div className="flex h-full flex-col">
@@ -209,6 +232,7 @@ export default function SpecialInterceptionPage() {
           <button className="mt-4 w-full cursor-pointer border-2 border-black py-2 text-xl font-bold">
             Submit
           </button>
+          <FormErrorList errors={errors} />
         </form>
       </div>
       <div

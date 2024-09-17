@@ -7,5 +7,6 @@ export interface SpecialInterception {
   t9Equipment: number
   modules: number
   t9ManufacturerEquipment: number
+  empty: number
   equipments: ManufacturerEquipment[]
 }

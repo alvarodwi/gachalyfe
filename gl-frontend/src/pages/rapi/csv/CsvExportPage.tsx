@@ -33,6 +33,8 @@ export function CsvExportPage() {
               <option value="anomaly">Anomaly Interceptions</option>
               <option value="special">Special Interceptions</option>
               <option value="equipment">Manufacturer Equipments</option>
+              <option value="mold-gacha">Mold Gacha</option>
+              <option value="banner-gacha">Banner Gacha</option>
             </select>
           </div>
 

@@ -1,8 +1,11 @@
 import useApi from '@api/services/rapi'
 import Breadcrumb from '@components/Breadcrumb'
+import FormErrorList from '@components/form/FormErrorList'
 import NikkeSelector from '@components/input/NikkeSelector'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { BannerGacha } from '@models/domain/BannerGacha'
 import { NikkeItem } from '@models/domain/Nikke'
+import { bannerGachaSchema } from '@utils/validation/schema'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -11,7 +14,32 @@ export default function RegularBannerPage() {
   const api = useApi().banners
   const [result, setResult] = useState<BannerGacha[]>()
 
-  const { register, handleSubmit, watch, setValue } = useForm<BannerGacha>({
+  const formSchema = bannerGachaSchema
+    .refine((data) => data.totalSSR <= data.totalAttempt, {
+      message: 'total ssr must be less than or equal to total attempt',
+      path: ['totalSSR'],
+    })
+    .refine((data) => data.nikkePulled.length == data.totalSSR, {
+      message: 'nikke pulled must be same with total ssr',
+      path: ['nikkePulled'],
+    })
+    .refine(
+      (data) => data.gemsUsed / 300 + data.ticketUsed == data.totalAttempt,
+      {
+        message:
+          'total attempt must be calculated correctly from gems and ticket used',
+        path: ['totalAttempt'],
+      }
+    )
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<BannerGacha>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       date: dayjs().format('YYYY-MM-DD'),
       pickUpName: 'Regular',
@@ -96,7 +124,7 @@ export default function RegularBannerPage() {
                 defaultValue={0}
                 min={0}
                 max={999}
-                {...register('totalAttempt')}
+                {...register('totalAttempt', { valueAsNumber: true })}
               />
             </div>
             <div className="i-tabler-arrow-right text-4xl" />
@@ -110,7 +138,7 @@ export default function RegularBannerPage() {
                 defaultValue={0}
                 min={0}
                 max={999}
-                {...register('ticketUsed')}
+                {...register('ticketUsed', { valueAsNumber: true })}
               />
             </div>
             <div className="w-auto">
@@ -120,7 +148,7 @@ export default function RegularBannerPage() {
               <input
                 type="number"
                 className="w-full border border-black text-center text-sm"
-                {...register('gemsUsed')}
+                {...register('gemsUsed', { valueAsNumber: true })}
                 min={0}
                 defaultValue={0}
                 max={99999}
@@ -139,7 +167,7 @@ export default function RegularBannerPage() {
               defaultValue={0}
               min={0}
               max={99}
-              {...register('totalSSR')}
+              {...register('totalSSR', { valueAsNumber: true })}
             />
           </div>
 
@@ -157,6 +185,7 @@ export default function RegularBannerPage() {
           <button className="mt-4 w-full cursor-pointer border-2 border-black py-2 text-xl font-bold">
             Submit
           </button>
+          <FormErrorList errors={errors} />
         </form>
       </div>
       <div
