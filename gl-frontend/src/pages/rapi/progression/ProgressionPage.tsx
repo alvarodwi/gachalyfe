@@ -3,7 +3,7 @@ import Breadcrumb from '@components/Breadcrumb'
 import { AnomalyInterceptionStats } from '@models/domain/stats/AnomalyInterceptionStats'
 import { SpecialInterceptionStats } from '@models/domain/stats/SpecialInterceptionStats'
 import dayjs from 'dayjs'
-import { capitalize, floor, startCase, toInteger } from 'lodash'
+import { floor, startCase } from 'lodash'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 

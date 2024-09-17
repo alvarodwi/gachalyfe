@@ -108,7 +108,7 @@ class AnomalyInterceptionServiceImpl(
     }
 
     override fun generateStats(dropType: String): AnomalyInterceptionStats {
-        val spec = AnomalyInterceptionSpecs.withDropType(dropType)
+        val spec = AnomalyInterceptionSpecs.hasDropType(dropType)
         val data = if (dropType != "All") repository.findAll(spec) else repository.findAll()
 
         val rewards = data.map { calculateAnomalyInterceptionReward(it) }

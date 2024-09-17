@@ -10,6 +10,8 @@ import me.gachalyfe.rapi.controller.toPagination
 import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
+import me.gachalyfe.rapi.domain.model.stats.EquipmentSourceStats
+import me.gachalyfe.rapi.domain.model.stats.EquipmentStats
 import me.gachalyfe.rapi.domain.service.ManufacturerEquipmentService
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -49,6 +51,30 @@ class ManufacturerEquipmentController(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
                 data = service.findAll(pageable).toPagination(),
+            )
+        return response.buildResponse()
+    }
+
+    @GetMapping("stats")
+    fun getEquipmentStats(
+        @RequestParam("sourceType") sourceType: String,
+    ): ResponseEntity<ApiResponse<EquipmentStats>> {
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.OK.value(),
+                message = "Stats retrieved successfully",
+                data = service.generateStats(EquipmentSourceType.valueOf(sourceType.uppercase())),
+            )
+        return response.buildResponse()
+    }
+
+    @GetMapping("stats/source")
+    fun getEquipmentSourceStats(): ResponseEntity<ApiResponse<EquipmentSourceStats>> {
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.OK.value(),
+                message = "Stats retrieved successfully",
+                data = service.generateSourceStats(),
             )
         return response.buildResponse()
     }

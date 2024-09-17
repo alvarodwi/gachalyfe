@@ -17,7 +17,7 @@ object AnomalyInterceptionSpecs {
             )
         }
 
-    fun withDropType(dropType: String): Specification<AnomalyInterceptionEntity> =
+    fun hasDropType(dropType: String): Specification<AnomalyInterceptionEntity> =
         Specification<AnomalyInterceptionEntity> { root, _, cb ->
             cb.equal(root.get<String>("dropType"), dropType)
         }
