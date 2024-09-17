@@ -1,8 +1,9 @@
 import useApi from '@api/services/rapi'
 import Breadcrumb from '@components/Breadcrumb'
 import { AnomalyInterceptionStats } from '@models/domain/stats/AnomalyInterceptionStats'
+import { SpecialInterceptionStats } from '@models/domain/stats/SpecialInterceptionStats'
 import dayjs from 'dayjs'
-import { capitalize, startCase } from 'lodash'
+import { capitalize, floor, startCase, toInteger } from 'lodash'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -13,6 +14,8 @@ interface AccountInfo {
   interceptionRecorded: number
   equipmentsDropped: number
   modulesDropped: number
+  manufacturerArmsDropped: number
+  modulesShardsDropped: number
 }
 
 export default function ProgressionPage() {
@@ -25,10 +28,15 @@ export default function ProgressionPage() {
     interceptionRecorded: 0,
     equipmentsDropped: 0,
     modulesDropped: 0,
+    manufacturerArmsDropped: 0,
+    modulesShardsDropped: 0,
   })
 
   const [anomalyInterceptionStats, setAnomalyInterceptionStats] =
     useState<AnomalyInterceptionStats>()
+
+  const [specialInterceptionStats, setSpecialInterceptionStats] =
+    useState<SpecialInterceptionStats>()
 
   async function fetchAnomalyInterceptionStats(dropType: string) {
     const response = await api.getAnomalyInterceptionStats(dropType)
@@ -39,8 +47,39 @@ export default function ProgressionPage() {
     }
   }
 
+  async function fetchSpecialInterceptionStats(bossName: string) {
+    const response = await api.getSpecialInterceptionStats(bossName)
+    if (response.status == 200) {
+      setSpecialInterceptionStats(response.data)
+    } else {
+      console.error(response.message)
+    }
+  }
+
+  useEffect(() => {
+    if (anomalyInterceptionStats && specialInterceptionStats) {
+      const totalEquipments =
+        anomalyInterceptionStats.totalEquipmentDrops +
+        specialInterceptionStats.totalManufacturerEquipments
+      const totalModules =
+        anomalyInterceptionStats.totalModules +
+        specialInterceptionStats.totalModules
+      const totalManufacturerArms =
+        anomalyInterceptionStats.totalManufacturerArms +
+        specialInterceptionStats.totalManufacturerArms
+      setAccountInfo((prev) => ({
+        ...prev,
+        equipmentsDropped: totalEquipments,
+        modulesDropped: totalModules,
+        manufacturerArmsDropped: totalManufacturerArms,
+        modulesShardsDropped: anomalyInterceptionStats.totalModulesShards,
+      }))
+    }
+  }, [anomalyInterceptionStats, specialInterceptionStats])
+
   function fetchStats() {
     fetchAnomalyInterceptionStats('All')
+    fetchSpecialInterceptionStats('All')
   }
 
   useEffect(() => {
@@ -81,15 +120,42 @@ export default function ProgressionPage() {
         </table>
 
         <h2 className="mt-4 text-lg font-semibold">Total Drops</h2>
-        <table id="drops-info" className="w-2/8 mt-2 table-auto">
-          <tr id="equipment-drops">
-            <td>T9Manu</td>
-            <td className="text-end">{accountInfo.equipmentsDropped}</td>
-          </tr>
-          <tr id="module-drops">
-            <td>Modules</td>
-            <td className="text-end">{accountInfo.modulesDropped}</td>
-          </tr>
+        <table id="drops-info" className="mt-2 w-auto table-fixed divide-black">
+          <thead className="text-center font-bold">
+            <tr>
+              <td className="border border-black px-2 py-2">
+                Manufacturer Equipments
+              </td>
+              <td className="border border-black px-2 py-2">Custom Modules</td>
+              <td className="border border-black px-2 py-2">
+                Manufacturer Arms
+              </td>
+              <td className="border border-black px-2 py-2">Modules Shards</td>
+            </tr>
+          </thead>
+          <tbody className="text-center text-lg">
+            <tr>
+              <td className="border border-black px-2 py-2">
+                {accountInfo.equipmentsDropped}
+              </td>
+              <td className="border border-black px-2 py-2">
+                {accountInfo.modulesDropped}
+              </td>
+              <td className="border border-black px-2 py-2">
+                {accountInfo.manufacturerArmsDropped}
+                <span className="block text-sm">
+                  ~ {floor(accountInfo.manufacturerArmsDropped / 200)}{' '}
+                  equipments
+                </span>
+              </td>
+              <td className="border border-black px-2 py-2">
+                {accountInfo.modulesShardsDropped}
+                <span className="block text-sm">
+                  ~ {floor(accountInfo.modulesShardsDropped / 100)} modules
+                </span>
+              </td>
+            </tr>
+          </tbody>
         </table>
 
         <h2 className="mt-4 text-lg font-semibold">Sub Menus</h2>
@@ -112,25 +178,54 @@ export default function ProgressionPage() {
         </div>
 
         <h2 className="mt-4 text-xl font-bold">Stats</h2>
-        <h3 className="text-lg font-medium">Anomaly Interception Stats</h3>
-        {anomalyInterceptionStats && (
-          <div className="flex w-2/5 flex-col gap-1 text-sm">
-            {Object.keys(anomalyInterceptionStats)
-              .slice(1)
-              .map((k) => (
-                <div key={k} className="flex flex-row">
-                  <span className="font-medium">{startCase(k)}</span>
-                  <span className="grow text-end">
-                    {
-                      anomalyInterceptionStats[
-                        k as keyof AnomalyInterceptionStats
-                      ]
-                    }
-                  </span>
-                </div>
-              ))}
+        <div className="flex flex-row flex-wrap gap-8">
+          <div className="flex flex-col" id="anomaly-interception-stats">
+            <h3 className="text-lg font-medium">Anomaly Interception</h3>
+            {anomalyInterceptionStats && (
+              <div className="flex flex-col gap-1 text-sm">
+                {Object.keys(anomalyInterceptionStats)
+                  .slice(1)
+                  .map((k) => (
+                    <div key={k} className="flex flex-row">
+                      <span className="mr-2 font-medium">{startCase(k)}</span>
+                      <span className="grow text-end">
+                        {
+                          anomalyInterceptionStats[
+                            k as keyof AnomalyInterceptionStats
+                          ]
+                        }
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            )}
           </div>
-        )}
+
+          <div
+            className="flex flex-col border-l border-black pl-2"
+            id="special-interception-stats"
+          >
+            <h3 className="text-lg font-medium">Special Interception</h3>
+            {specialInterceptionStats && (
+              <div className="flex flex-col gap-1 text-sm">
+                {Object.keys(specialInterceptionStats)
+                  .slice(1)
+                  .map((k) => (
+                    <div key={k} className="flex flex-row">
+                      <span className="mr-2 font-medium">{startCase(k)}</span>
+                      <span className="grow text-end">
+                        {
+                          specialInterceptionStats[
+                            k as keyof SpecialInterceptionStats
+                          ]
+                        }
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </main>
   )
