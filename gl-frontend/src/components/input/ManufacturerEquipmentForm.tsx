@@ -55,7 +55,7 @@ export default function ManufacturerEquipmentForm(props: Props) {
         >
           <option value="Attacker">Attacker</option>
           <option value="Defender">Defender</option>
-          <option value="Support">Support</option>
+          <option value="Supporter">Supporter</option>
         </select>
       </div>
       <div className="w-fit">

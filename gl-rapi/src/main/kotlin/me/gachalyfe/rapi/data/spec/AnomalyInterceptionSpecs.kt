@@ -16,4 +16,9 @@ object AnomalyInterceptionSpecs {
                 cb.notEqual(root.get<String>("dropType"), "Modules"),
             )
         }
+
+    fun hasDropType(dropType: String): Specification<AnomalyInterceptionEntity> =
+        Specification<AnomalyInterceptionEntity> { root, _, cb ->
+            cb.equal(root.get<String>("dropType"), dropType)
+        }
 }

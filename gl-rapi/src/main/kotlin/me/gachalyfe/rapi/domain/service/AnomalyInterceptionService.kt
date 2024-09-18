@@ -1,6 +1,7 @@
 package me.gachalyfe.rapi.domain.service
 
 import me.gachalyfe.rapi.domain.model.AnomalyInterception
+import me.gachalyfe.rapi.domain.model.stats.AnomalyInterceptionStats
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -23,5 +24,7 @@ interface AnomalyInterceptionService {
         model: AnomalyInterception,
     ): AnomalyInterception
 
-    fun update(id: Long): Boolean
+    fun delete(id: Long): Boolean
+
+    fun generateStats(dropType: String): AnomalyInterceptionStats
 }

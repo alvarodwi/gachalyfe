@@ -6,6 +6,7 @@ import me.gachalyfe.rapi.data.spec.SpecialInterceptionSpecs
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
 import me.gachalyfe.rapi.domain.model.SpecialInterception
+import me.gachalyfe.rapi.domain.model.stats.SpecialInterceptionStats
 import me.gachalyfe.rapi.domain.service.ManufacturerEquipmentService
 import me.gachalyfe.rapi.domain.service.SpecialInterceptionService
 import me.gachalyfe.rapi.utils.exception.ResourceNotFoundException
@@ -124,5 +125,27 @@ class SpecialInterceptionServiceImpl(
 
         repository.deleteById(data.id)
         return true
+    }
+
+    override fun generateStats(bossName: String): SpecialInterceptionStats {
+        val spec = SpecialInterceptionSpecs.hasBossName(bossName)
+        val data = if (bossName != "All") repository.findAll(spec) else repository.findAll()
+
+        val totalEquipments = data.sumOf { it.t9Equipment }
+        val totalManufacturerEquipments = data.sumOf { it.t9ManufacturerEquipment }
+        val totalModules = data.sumOf { it.modules }
+        val totalEmptyDrops = data.sumOf { it.empty }
+        val totalAttempts = totalEquipments + totalManufacturerEquipments + totalModules + totalEmptyDrops
+        val totalManufacturerArms = totalAttempts * 20 // assumed every attempts is on 9th stage
+
+        return SpecialInterceptionStats(
+            bossName = bossName,
+            totalAttempts = totalAttempts,
+            totalEquipments = totalEquipments,
+            totalManufacturerEquipments = totalManufacturerEquipments,
+            totalModules = totalModules,
+            totalEmptyDrops = totalEmptyDrops,
+            totalManufacturerArms = totalManufacturerArms,
+        )
     }
 }

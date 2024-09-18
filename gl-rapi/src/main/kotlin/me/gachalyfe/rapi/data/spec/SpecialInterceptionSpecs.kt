@@ -13,4 +13,9 @@ object SpecialInterceptionSpecs {
         Specification<SpecialInterceptionEntity> { root, _, cb ->
             cb.greaterThan(root.get("t9ManufacturerEquipment"), 0)
         }
+
+    fun hasBossName(bossName: String) =
+        Specification<SpecialInterceptionEntity> { root, _, cb ->
+            cb.equal(root.get<String>("bossName"), bossName)
+        }
 }

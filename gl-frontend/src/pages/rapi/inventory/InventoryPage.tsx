@@ -1,17 +1,45 @@
+import useApi from '@api/services/rapi'
 import Breadcrumb from '@components/Breadcrumb'
-import { useState } from 'react'
+import EquipmentStatsTable from '@components/table/EquipmentStatsTable'
+import { EquipmentSourceStats } from '@models/domain/stats/EquipmentSourceStats'
+import { EquipmentStats } from '@models/domain/stats/EquipmentStats'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
-interface InventoryInfo {
-  manufacturerArmsOpened: number
-  manufacturerFurnaceOpened: number
-}
-
 export default function InventoryPage() {
-  const [inventoryInfo] = useState<InventoryInfo>({
-    manufacturerArmsOpened: 0,
-    manufacturerFurnaceOpened: 0,
-  })
+  const api = useApi().stats
+
+  const [equipmentStats, setEquipmentStats] = useState<EquipmentStats>()
+  const [equipmentSourceStats, setEquipmentSourceStats] =
+    useState<EquipmentSourceStats>()
+
+  async function fetchEquipmentStats(sourceType: string) {
+    const response = await api.getEquipmentStats(sourceType)
+    if (response.status == 200) {
+      setEquipmentStats(response.data)
+    } else {
+      console.error(response.message)
+    }
+  }
+
+  async function fetchEquipmentSourceStats() {
+    const response = await api.getEquipmentSourceStats()
+    if (response.status == 200) {
+      setEquipmentSourceStats(response.data)
+    } else {
+      console.error(response.message)
+    }
+  }
+
+  function fetchStats() {
+    fetchEquipmentStats('Unknown')
+    fetchEquipmentSourceStats()
+  }
+
+  useEffect(() => {
+    fetchStats()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <main className="bg-gray-1 flex min-h-screen w-full font-serif">
@@ -22,21 +50,7 @@ export default function InventoryPage() {
         <Breadcrumb className="my-2" />
         <h1 className="text-4xl font-bold">Inventory</h1>
 
-        <h2 className="mt-4 text-xl font-semibold">Total unboxing of</h2>
-        <table id="account-info" className="w-3/8 mt-2 table-auto items-center">
-          <tr id="account-id">
-            <td>Manufacturer Arms</td>
-            <td className="text-end">{inventoryInfo.manufacturerArmsOpened}</td>
-          </tr>
-          <tr id="account-creation-date">
-            <td>Manufacturer Furnace </td>
-            <td className="text-end">
-              {inventoryInfo.manufacturerFurnaceOpened}
-            </td>
-          </tr>
-        </table>
-
-        <h2 className="mt-4 text-xl font-semibold">Sub Menus</h2>
+        <h2 className="mt-4 text-lg font-semibold">Sub Menus</h2>
 
         <div className="mt-4 flex w-full flex-row flex-wrap justify-start gap-4 text-center">
           <Link
@@ -54,6 +68,47 @@ export default function InventoryPage() {
             <span className="mt-1 text-lg font-bold">Manufacturer Furnace</span>
           </Link>
         </div>
+
+        {equipmentSourceStats && (
+          <>
+            <h2 className="mt-4 text-lg font-semibold">Equipments source</h2>
+            <table className="mt-2 w-auto table-fixed divide-black">
+              <thead className="text-center font-bold">
+                <tr>
+                  <td className="border border-black p-2">
+                    Anomaly Interception
+                  </td>
+                  <td className="border border-black p-2">
+                    Special Interception
+                  </td>
+                  <td className="border border-black p-2">Manufacturer Arms</td>
+                  <td className="border border-black p-2">
+                    Manufacturer Furnace
+                  </td>
+                </tr>
+              </thead>
+              <tbody className="text-center text-lg">
+                <tr>
+                  <td className="border border-black p-2">
+                    {equipmentSourceStats.totalFromAnomalyInterception}
+                  </td>
+                  <td className="border border-black p-2">
+                    {equipmentSourceStats.totalFromSpecialInterception}
+                  </td>
+                  <td className="border border-black p-2">
+                    {equipmentSourceStats.totalManufacturerArmsOpened}
+                  </td>
+                  <td className="border border-black p-2">
+                    {equipmentSourceStats.totalManufacturerFurnaceOpened}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </>
+        )}
+
+        <h2 className="mb-2 mt-4 text-lg font-semibold">Equipment Stats</h2>
+        {equipmentStats && <EquipmentStatsTable data={equipmentStats} />}
       </div>
     </main>
   )

@@ -8,6 +8,7 @@ import me.gachalyfe.rapi.controller.dto.MoldGachaDTO
 import me.gachalyfe.rapi.controller.toPagination
 import me.gachalyfe.rapi.data.mapper.toModel
 import me.gachalyfe.rapi.domain.model.MoldGacha
+import me.gachalyfe.rapi.domain.model.stats.MoldGachaStats
 import me.gachalyfe.rapi.domain.service.MoldGachaService
 import me.gachalyfe.rapi.utils.lazyLogger
 import org.springframework.data.domain.PageRequest
@@ -50,6 +51,17 @@ class MoldGachaController(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
                 data = service.findAll(pageable).toPagination(),
+            )
+        return response.buildResponse()
+    }
+
+    @GetMapping("stats")
+    fun getMoldGachaStats(): ResponseEntity<ApiResponse<List<MoldGachaStats>>> {
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.OK.value(),
+                message = "Stats retrieved successfully",
+                data = service.generateStats(),
             )
         return response.buildResponse()
     }

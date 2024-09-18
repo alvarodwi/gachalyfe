@@ -7,6 +7,9 @@ import me.gachalyfe.rapi.data.repository.ManufacturerEquipmentRepository
 import me.gachalyfe.rapi.data.spec.ManufacturerEquipmentSpecs
 import me.gachalyfe.rapi.domain.model.EquipmentSourceType
 import me.gachalyfe.rapi.domain.model.ManufacturerEquipment
+import me.gachalyfe.rapi.domain.model.stats.EquipmentSourceStats
+import me.gachalyfe.rapi.domain.model.stats.EquipmentStats
+import me.gachalyfe.rapi.domain.model.stats.EquipmentStatsByCategory
 import me.gachalyfe.rapi.domain.service.ManufacturerEquipmentService
 import me.gachalyfe.rapi.utils.exception.ResourceNotFoundException
 import org.springframework.data.domain.Page
@@ -33,7 +36,7 @@ class ManufacturerEquipmentServiceImpl(
         sourceType: EquipmentSourceType,
         pageable: Pageable,
     ): Page<ManufacturerEquipment> {
-        val specs = ManufacturerEquipmentSpecs.isInType(sourceType)
+        val specs = ManufacturerEquipmentSpecs.hasSourceType(sourceType)
         val data = repository.findAll(specs, pageable)
         return data.map { it.toModel() }
     }
@@ -44,8 +47,8 @@ class ManufacturerEquipmentServiceImpl(
     ): List<ManufacturerEquipment> {
         val specs =
             ManufacturerEquipmentSpecs
-                .isInType(sourceType)
-                .and(ManufacturerEquipmentSpecs.withSourceId(sourceId))
+                .hasSourceType(sourceType)
+                .and(ManufacturerEquipmentSpecs.hasSourceId(sourceId))
         val data = repository.findAll(specs)
         return data.map { it.toModel() }
     }
@@ -86,5 +89,45 @@ class ManufacturerEquipmentServiceImpl(
                 ?: throw ResourceNotFoundException("There's no such manufacturer equipments with id=$id")
         repository.deleteById(data.id)
         return true
+    }
+
+    override fun generateStats(sourceType: EquipmentSourceType): EquipmentStats {
+        val spec = ManufacturerEquipmentSpecs.hasSourceType(sourceType)
+        val data =
+            when (sourceType) {
+                EquipmentSourceType.UNKNOWN -> repository.findAll()
+                else -> repository.findAll(spec)
+            }
+
+        val equipmentStatsByCategory: List<EquipmentStatsByCategory> =
+            data
+                .groupingBy {
+                    Triple(it.manufacturer, it.classType, it.slotType)
+                }.eachCount()
+                .map { (key, count) ->
+                    EquipmentStatsByCategory(
+                        manufacturer = key.first,
+                        classType = key.second,
+                        slotType = key.third,
+                        total = count,
+                    )
+                }
+
+        return EquipmentStats(
+            sourceType = sourceType,
+            equipmentStatsByCategory = equipmentStatsByCategory,
+            total = data.size,
+        )
+    }
+
+    override fun generateSourceStats(): EquipmentSourceStats {
+        val data = repository.findAll()
+        val totalCounts = data.groupingBy { it.sourceType }.eachCount()
+        return EquipmentSourceStats(
+            totalManufacturerArmsOpened = totalCounts.getOrDefault(EquipmentSourceType.ARMS.ordinal, 0),
+            totalManufacturerFurnaceOpened = totalCounts.getOrDefault(EquipmentSourceType.FURNACE.ordinal, 0),
+            totalFromAnomalyInterception = totalCounts.getOrDefault(EquipmentSourceType.AI_DROPS.ordinal, 0),
+            totalFromSpecialInterception = totalCounts.getOrDefault(EquipmentSourceType.SI_DROPS.ordinal, 0),
+        )
     }
 }

@@ -1,6 +1,7 @@
 package me.gachalyfe.rapi.domain.service
 
 import me.gachalyfe.rapi.domain.model.SpecialInterception
+import me.gachalyfe.rapi.domain.model.stats.SpecialInterceptionStats
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -24,4 +25,6 @@ interface SpecialInterceptionService {
     ): SpecialInterception
 
     fun delete(id: Long): Boolean
+
+    fun generateStats(bossName: String): SpecialInterceptionStats
 }

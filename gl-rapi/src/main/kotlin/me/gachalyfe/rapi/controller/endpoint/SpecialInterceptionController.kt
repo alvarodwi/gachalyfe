@@ -7,6 +7,7 @@ import me.gachalyfe.rapi.controller.buildResponse
 import me.gachalyfe.rapi.controller.dto.SpecialInterceptionDTO
 import me.gachalyfe.rapi.controller.toPagination
 import me.gachalyfe.rapi.domain.model.SpecialInterception
+import me.gachalyfe.rapi.domain.model.stats.SpecialInterceptionStats
 import me.gachalyfe.rapi.domain.service.SpecialInterceptionService
 import me.gachalyfe.rapi.utils.lazyLogger
 import org.springframework.data.domain.PageRequest
@@ -50,6 +51,19 @@ class SpecialInterceptionController(
                 status = HttpStatus.OK.value(),
                 message = "Data retrieved successfully",
                 data = service.findAll(pageable).toPagination(),
+            )
+        return response.buildResponse()
+    }
+
+    @GetMapping("stats")
+    fun getAnomalyInterceptionStats(
+        @RequestParam("bossName") bossName: String,
+    ): ResponseEntity<ApiResponse<SpecialInterceptionStats>> {
+        val response =
+            ApiResponse.Success(
+                status = HttpStatus.OK.value(),
+                message = "Stats retrieved successfully",
+                data = service.generateStats(bossName),
             )
         return response.buildResponse()
     }
